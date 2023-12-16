@@ -1,3 +1,4 @@
+ 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +8,10 @@
 </head>
 <body>
     <h2>GeoNames API Table</h2>
+
+    <!-- Add this button to trigger the alert -->
+<!-- <button type="button" id="testAlertButton">Test Alert</button> -->
+
 
     <table border="1">
         <thead>
@@ -24,13 +29,11 @@
                 <td>Ocean API</td>
                 <td>Provides Ocean information</td>
                 <td class="input-container">
-                    <select id="sellat">
-                        <option value="40.78343">Latitude</option>
-                    </select>
+                    <label for="inputLat">Latitude:</label>
+                    <input type="number" id="inputLat" placeholder="Enter Latitude" value="40.78343">
             
-                    <select id="sellng">
-                        <option value="-43.96625">Longitude</option>
-                    </select>
+                    <label for="inputLng">Longitude:</label>
+                    <input type="number" id="inputLng" placeholder="Enter Longitude" value="-43.96625">
                 </td>
                 <td><button type="button" class="btnRunOcean">Submit</button></td>
             </tr>
@@ -40,13 +43,11 @@
                 <td>TimeZone API</td>
                 <td>Fetches the time Zone</td>
                 <td class="input-container">
-                    <select id="sellatTime">
-                        <option value="47.01">Latitude</option>
-                    </select>
+                    <label for="sellatTime">Latitude:</label>
+                    <input type="number" id="sellatTime" placeholder="Enter Latitude" value="47.01">
             
-                    <select id="sellngTime">
-                        <option value="10.2">Longitude</option>
-                    </select>
+                    <label for="sellngTime">Longitude:</label>
+                    <input type="number" id="sellngTime" placeholder="Enter Longitude" value="10.2">
                 </td>
                 <td><button type="button" class="btnRunTimeZone">Submit</button></td>
             </tr>
@@ -57,16 +58,16 @@
                 <td>Retrieves current weather data</td>
                 <td class="input-container">
                     <label for="north">North:</label>
-                    <input type="text" id="northWeather" value="44.1">
+                    <input type="number" id="northWeather" value="44.1">
                     <br>
                     <label for="south">South:</label>
-                    <input type="text" id="southWeather" value="-9.9">
+                    <input type="number" id="southWeather" value="-9.9">
                     <br>
                     <label for="east">East:</label>
-                    <input type="text" id="eastWeather" value="-22.4">
+                    <input type="number" id="eastWeather" value="-22.4">
                     <br>
                     <label for="west">West:</label>
-                    <input type="text" id="westWeather" value="55.2">
+                    <input type="number" id="westWeather" value="55.2">
                 </td>
                 <td><button type="button" class="btnRunWeather">Submit</button></td>
             </tr>
@@ -109,6 +110,6 @@
        </tbody>
     </table>
     <script type="application/javascript" src="libs/js/jquery-2.2.3.min.js"></script>
-	<script type="application/javascript" src="libs/js/main.js"></script>
+	<script type="application/javascript" src="libs/js/script.js"></script>
 </body>
 </html>

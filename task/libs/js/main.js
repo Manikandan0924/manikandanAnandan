@@ -6,8 +6,8 @@ $(document).ready(function () {
             type: 'POST',
             dataType: 'json',
             data: {
-                lat: $('#sellat').val(),
-                lng: $('#sellng').val()
+                lat: $('#inputLat').val(),
+                lng: $('#inputLng').val()
             },
             success: function (result) {
                 console.log(JSON.stringify(result));

@@ -1,31 +1,90 @@
-	$('#btnRun').click(function() {
+$(document).ready(function () {
+    // Ocean API
+    $('.btnRunOcean').click(function () {
+        $.ajax({
+            url: "libs/php/test.php",
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                lat: $('#inputLat').val(),
+                lng: $('#inputLng').val()
+            },
+            success: function (result) {
+                console.log(JSON.stringify(result));
+                if (result.status.name == "ok") {
+                    updateOceanResults(result.data);
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error(textStatus, errorThrown);
+            }
+        });
+    });
 
-		$.ajax({
-			url: "libs/php/getCountryInfo.php",
-			type: 'POST',
-			dataType: 'json',
-			data: {
-				country: $('#selCountry').val(),
-				lang: $('#selLanguage').val()
-			},
-			success: function(result) {
+    // TimeZone API
+    $('.btnRunTimeZone').click(function () {
+        $.ajax({
+            url: "libs/php/test2.php",
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                lat: $('#sellatTime').val(),
+                lng: $('#sellngTime').val()
+            },
+            success: function (result) {
+                console.log(JSON.stringify(result));
+                if (result.status.name == "ok") {
+                    updateTimeZoneResults(result.data);
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error(textStatus, errorThrown);
+            }
+        });
+    });
 
-				console.log(JSON.stringify(result));
+    // Weather API
+    $('.btnRunWeather').click(function () {
+        $.ajax({
+            url: "libs/php/test3.php",
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                north: $('#northWeather').val(),
+                south: $('#southWeather').val(),
+                east: $('#eastWeather').val(),
+                west: $('#westWeather').val()
+            },
+            success: function (result) {
+                console.log(JSON.stringify(result));
+                if (result.status.name == "ok") {
+                    updateWeatherResults(result.data[0]);
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error(textStatus, errorThrown);
+            }
+        });
+    });
 
-				if (result.status.name == "ok") {
+    // Function to update Ocean API results
+    function updateOceanResults(data) {
+        $('#txtDistance').html(data.distance);
+        $('#txtGeonameId').html(data.geonameId);
+        $('#txtName').html(data.name);
+    }
 
-					$('#txtContinent').html(result['data'][0]['continent']);
-					$('#txtCapital').html(result['data'][0]['capital']);
-					$('#txtLanguages').html(result['data'][0]['languages']);
-					$('#txtPopulation').html(result['data'][0]['population']);
-					$('#txtArea').html(result['data'][0]['areaInSqKm']);
+    // Function to update TimeZone API results
+    function updateTimeZoneResults(data) {
+        $('#txtcountryName').html(data.countryName);
+        $('#txttime').html(data.time);
+        $('#txtcountryCode').html(data.countryCode);
+    }
 
-				}
-			
-			},
-			error: function(jqXHR, textStatus, errorThrown) {
-				// your error code
-			}
-		}); 
-	
-	});
+    // Function to update Weather API results
+    function updateWeatherResults(data) {
+        $('#txtTemperature').html(data.temperature);
+        $('#txtHumidity').html(data.humidity);
+        $('#txtwindDirection').html(data.windDirection);
+    }
+});

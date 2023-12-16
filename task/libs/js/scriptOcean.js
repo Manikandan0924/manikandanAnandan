@@ -14,7 +14,6 @@ $(document).ready(function() {
                 console.log(result.data);
                 if (result.status.name == "ok") {
                     $('#txtDistance').html(result.data.distance);
-                    // $('#Distanceheading').html('distance');
                     $('#txtGeonameId').html(result.data.geonameId);
                     $('#txtName').html(result.data.name);
                 }
