@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAZETTEER</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+
+    <!-- Include your custom stylesheet -->
+    <link rel="stylesheet" href="./libs/css/style.css"/>
+    
+    <link rel="stylesheet" href="./libs/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="./libs/css/easy-button.min.css"/>
+    <!-- <link rel="stylesheet" href="./libs/css/leaflet.css"/> -->
+    <link rel="stylesheet" href="./libs/css/leaflet.extra-markers.min.css"/>
+    <link rel="stylesheet" href="./libs/css/MarkerCluster.Default.min.css"/>
+    <link rel="stylesheet" href="./libs/css/MarkerCluster.min.css"/>
+    <link rel="stylesheet" href="./libs/css/toastify.min.css"/>
+    <link rel="stylesheet" href="fontawesome-free-6.5.1-web/fontawesome-free-6.5.1-web/css/all.css"/>
+</head>
+<body>
+  <span id="selectContainer">
+    <select id="countrySelect" class="form-select shadow-sm"></select>
+  </span>
+
+    <!-- Leaflet Map Container -->
+    <div id="map"></div>
+
+
+ <!-- Example modal for Country Information -->
+ <div id="exampleModal" class="modal" data-bs-backdrop="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content shadow">
+        <div class="modal-header bg-success bg-gradient text-white">
+          <h5 class="modal-title">Country Info</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <table class="table table-striped">
+            <tr>
+              <td class="text-center">
+                <i class="fa-solid fa-street-view fa-xl text-success"></i>
+              </td>
+              <td>
+                Country Name
+              </td>
+              <td class="text-end" id="countryName">
+                <!-- Country name will be inserted here -->
+              </td>
+            </tr>
+            <tr>
+              <td class="text-center">
+                <i class="fa-solid fa-street-view fa-xl text-success"></i>
+              </td>
+              <td>
+                Capital
+              </td>
+              <td class="text-end" id="capital">
+                <!-- Capital will be inserted here -->
+              </td>
+            </tr>
+            <tr>
+              <td class="text-center">
+                <i class="fa-solid fa-street-view fa-xl text-success"></i>
+              </td>
+              <td>
+                Population
+              </td>
+              <td class="text-end" id="population">
+                <!-- Population will be inserted here -->
+              </td>
+            </tr>
+            <tr>
+              <td class="text-center">
+                <i class="fa-solid fa-street-view fa-xl text-success"></i>
+              </td>
+              <td>
+                CurrencyCode
+              </td>
+              <td class="text-end" id="currencyCode">
+                <!-- currencyCode will be inserted here -->
+              </td>
+            </tr>
+            <tr>
+              <td class="text-center">
+                <i class="fa-solid fa-street-view fa-xl text-success"></i>
+              </td>
+              <td>
+                Continent
+              </td>
+              <td class="text-end" id="continent">
+                <!-- continent will be inserted here -->
+              </td>
+            </tr>
+            <tr>
+              <td class="text-center">
+                <i class="fa-solid fa-street-view fa-xl text-success"></i>
+              </td>
+              <td>
+                Languages
+              </td>
+              <td class="text-end" id="languages">
+                <!-- languages will be inserted here -->
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-success btn-sm" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+<!-- Example modal for Weather Information -->
+<div id="weatherModal" class="modal" data-bs-backdrop="false" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content shadow">
+      <div class="modal-header bg-warning bg-gradient text-white">
+        <h5 class="modal-title">Weather Info</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-striped">
+          <tr>
+            <td>
+              <b>Weather Condition:</b>
+            </td>
+            <td id="weatherCondition"></td>
+          </tr>
+          <tr>
+            <td>
+              <b>ICAO:</b>
+            </td>
+            <td id="ICAO"></td>
+          </tr>
+          <tr>
+            <td>
+              <b>Clouds:</b>
+            </td>
+            <td id="clouds"></td>
+          </tr>
+          <tr>
+            <td>
+              <b>Dew Point:</b>
+            </td>
+            <td id="dewPoint"></td>
+          </tr>
+          <tr>
+            <td>
+              <b>Clouds Code:</b>
+            </td>
+            <td id="cloudsCode"></td>
+          </tr>
+          <tr>
+            <td>
+              <b>Date and Time:</b>
+            </td>
+            <td id="datetime"></td>
+          </tr>
+          <tr>
+            <td>
+              <b>Temperature:</b>
+            </td>
+            <td id="temperature"></td>
+          </tr>
+          <tr>
+            <td>
+              <b>Humidity:</b>
+            </td>
+            <td id="humidity"></td>
+          </tr>
+          <tr>
+            <td>
+              <b>Station Name:</b>
+            </td>
+            <td id="stationName"></td>
+          </tr>
+          <tr>
+            <td>
+              <b>Wind Direction:</b>
+            </td>
+            <td id="windDirection"></td>
+          </tr>
+          <tr>
+            <td>
+              <b>Wind Speed:</b>
+            </td>
+            <td id="windSpeed"></td>
+          </tr>
+          <tr>
+            <td>
+              <b>Latitude:</b>
+            </td>
+            <td id="lat"></td>
+          </tr>
+          <tr>
+            <td>
+              <b>Longitude:</b>
+            </td>
+            <td id="lng"></td>
+          </tr>
+  
+       </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-warning btn-sm" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div> 
+
+
+
+<!-- Wikipedia Modal -->
+<div class="modal fade" id="wikipediaModal" tabindex="-1" aria-labelledby="wikipediaModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="wikipediaModalLabel">Wikipedia Information</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="card border-0">
+          <img id="wikipediaThumbnailImg" src="" alt="Wikipedia Thumbnail" class="card-img-top">
+          <div class="card-body">
+            <h5 class="card-title fw-bold fs-4 text-primary" id="wikipediaTitle"></h5>
+            <p class="card-text lead" id="wikipediaSummary"></p>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <b>Elevation:</b>
+                <span id="wikipediaElevation"></span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <b>Feature:</b>
+                <span id="wikipediaFeature"></span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <b>Title:</b>
+                <span id="wikipediatitle"></span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <b>Country Code:</b>
+                <span id="wikipediaCountryCode"></span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <b>Rank:</b>
+                <span id="wikipediaRank"></span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <a id="wikipediaLink" href="#" class="btn btn-primary" target="_blank">Read More on Wikipedia</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+  
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+
+<!-- Include jQuery library -->
+<script type="application/javascript" src="./libs/js/jquery.min.js"></script>
+
+<!-- Include other scripts -->
+<script type="application/javascript" src="./libs/js/bootstrap.min.js"></script>
+<script type="application/javascript" src="./libs/js/easy-button.min.js"></script>
+<script type="application/javascript" src="./libs/js/leaflet.extra-markers.js"></script>
+<!-- <script type="application/javascript" src="./libs/js/leaflet.js"></script> -->
+<script type="application/javascript" src="./libs/js/leaflet.markercluster.js"></script>
+<script type="application/javascript" src="./libs/js/toastify.min.js"></script>
+<script type="application/javascript" src="./libs/js/script1.js"></script>
+<script type="application/javascript" src="fontawesome-free-6.5.1-web/fontawesome-free-6.5.1-web/js/all.js"></script>
+    
+</body>
+</html>

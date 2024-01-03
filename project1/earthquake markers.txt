@@ -1,0 +1,11 @@
+1. Write a php routine to the geonames country info api.
+2. Write an ajax request (the ajax request is inside the dropdown change event handler callback function) to the above php routine, 
+   pass in the country code since the country info api takes a country code.
+3. Write a php routine to the geonames earthquakes api
+4. Write an ajax request to the earthquakes php routine from inside the success callback function of the ajax request to the country info 
+   php routine.
+5. Pass in thge north, south, west, east coordinates from the country info api as parameters.
+6. You should get back an array of markers, iterate over this array using a for-loop adding markers programmatically 
+e.g for(let i=0;i<result.data.length;i++){
+    L.marker([result.data[i].lat, result.data[i].lng]).addTo(map);
+    }
