@@ -32,7 +32,7 @@ var layerControl = L.control.layers(basemaps).addTo(map);
 
 
 
-var markersLayer = L.layerGroup(); // Create a layer group for markers
+
 
 // Function to get user's geolocation
 function getUserLocation() {
@@ -95,6 +95,8 @@ async function updateDropdownWithUserCountry(latitude, longitude) {
   }
 }
 
+
+var markersLayer = L.layerGroup(); // Create a layer group for markers
 // Function to add markers on the selected country
 function addMarkersOnCountry(selected) {
   // Clear existing markers
@@ -177,12 +179,15 @@ function addMarker(e, selected) {
 
 $("#countrySelect").on("change", function () {
   let selectedval = this.value;
+  // Clear existing earthquake markers
+  markersLayer.clearLayers();
   $.ajax({
     url: 'countryInfo.php',
     method: 'GET',
     data: { countryIsoCode: selectedval },
     dataType: 'json',
     success: function (result) {
+    
         for (let i = 0; i < result.data.earthquakes.length; i++) {
         L.marker([result.data.earthquakes[i].lat, result.data.earthquakes[i].lng]).addTo(map);
       }
@@ -410,3 +415,166 @@ var wikipediaButton = L.easyButton({
 // Add Leaflet EasyButton to the map
 wikipediaButton.addTo(map);
 
+
+
+var selectedVal; // Variable to store the selected country ISO code
+var exchangeRates; // Global variable to store exchange rates
+
+var currencyConverterButton = L.easyButton({
+  states: [
+    {
+      icon: "fas fa-money",
+      title: "Open Currency Converter",
+      onClick: function (btn, map) {
+        selectedVal = $("#countrySelect").val(); // Set the initial selected country
+        fetchDefaultFromCurrency();
+        openCurrencyConverterModal(); // Trigger the initial fetch
+      },
+    },
+  ],
+});
+
+currencyConverterButton.addTo(map);
+
+// Your Currency Converter Modal
+function openCurrencyConverterModal() {
+  // Clear existing options
+  $('#toCurrency').empty();
+  $('#fromCurrency').empty();
+
+  // Fetch the default From Currency for the selected country
+  fetchDefaultFromCurrency();
+
+  // Fetch exchange rates using AJAX
+  fetchExchangeRates();
+}
+
+// Function to fetch the default From Currency for the selected country
+function fetchDefaultFromCurrency() {
+  $.ajax({
+    url: 'currencycode.php',
+    method: 'GET',
+    data: { countryIsoCode: selectedVal },
+    dataType: 'json',
+    success: function (data) {
+      // Set the default From Currency in the modal
+      var fromCurrencySelect = $('#fromCurrency');
+      fromCurrencySelect.val(data.isocode);
+    },
+    error: function (xhr, status, error) {
+      console.error('Error fetching exchange rates:', status, error);
+    }
+  });
+}
+
+// Function to fetch exchange rates using AJAX
+function fetchExchangeRates() {
+  $.ajax({
+    url: 'exchangerates.php',
+    method: 'GET',
+    data: { countryIsoCode: selectedVal },
+    dataType: 'json',
+    success: function (data) {
+      // Store exchange rates in the global variable
+      exchangeRates = data.rates;
+
+      // Populate "To Currency" options
+      populateCurrencyOptions(exchangeRates);
+
+      // Open the Bootstrap modal
+      $('#converterModal').modal('show');
+    },
+    error: function () {
+      console.error('Error fetching exchange rates.');
+    }
+  });
+}
+
+// Function to populate "To Currency" options
+function populateCurrencyOptions(exchangeRates) {
+  // Populate currency options
+  var toCurrencySelect = $('#toCurrency');
+  var fromCurrencySelect = $('#fromCurrency');
+  $.each(exchangeRates, function (currency, rate) {
+    toCurrencySelect.append('<option value="' + currency + '">' + currency + '</option>');
+    fromCurrencySelect.append('<option value="' + currency + '">' + currency + '</option>');
+  });
+
+  // Convert currency on form submission
+  $('#converterForm').submit(function (e) {
+    e.preventDefault();
+
+    var amount = $('#amount').val();
+    var fromCurrency = $('#fromCurrency').val();
+    var toCurrency = $('#toCurrency').val();
+
+    if (amount && fromCurrency && toCurrency) {
+      // Perform the currency conversion
+      var convertedAmount = convertCurrency(amount, fromCurrency, toCurrency);
+
+      // Display the converted amount
+      $('#convertedAmount').text('Converted Amount: ' + convertedAmount.toFixed(2) + ' ' + toCurrency);
+    }
+  });
+}
+
+// Function to perform currency conversion
+function convertCurrency(amount, fromCurrency, toCurrency) {
+  var rateFrom = exchangeRates[fromCurrency];
+  var rateTo = exchangeRates[toCurrency];
+
+  if (rateFrom && rateTo) {
+    return (amount / rateFrom) * rateTo;
+  } else {
+    console.error('Exchange rates for selected currencies not available.');
+    return 0;
+  }
+}
+
+
+
+// Leaflet EasyButton for Timezone Info
+var timezoneButton = L.easyButton({
+  states: [{
+    icon: 'fa-regular fa-clock', // Replace with your preferred icon
+    title: 'Show Timezone Info',
+    onClick: function(btn, map) {
+      selectedVal = $("#countrySelect").val();
+      fetchAndDisplayTimezone(selectedVal);
+    }
+  }]
+});
+
+// Add Timezone Info Button to the map
+timezoneButton.addTo(map);
+
+// Function to fetch and display Timezone information
+function fetchAndDisplayTimezone(selectedVal) {
+  $.ajax({
+    url: 'timezoneInfo.php', // Replace with the actual filename
+    method: 'GET',
+    data: { countryIsoCode: selectedVal },
+    dataType: 'json',
+    success: function (result) {
+      if (result && result.data && result.data.timezone) {
+        var timezoneData = result.data.timezone;
+
+        // Populate the modal with the received data
+        $('#modalCountryName').text(timezoneData.countryName);
+        $('#modalCountryCode').text(timezoneData.countryCode);
+        $('#modalTimezoneId').text(timezoneData.timezoneId);
+        $('#modalSunrise').text(timezoneData.sunrise);
+        $('#modalSunset').text(timezoneData.sunset);
+        $('#modalTime').text(timezoneData.time);
+
+        // Open the Timezone Modal
+        $('#timezoneModal').modal('show');
+      } else {
+        console.error('Invalid or missing data in the response:', result);
+      }
+    },
+    error: function (xhr, status, error) {
+      console.error('Error fetching Timezone information:', status, error);
+    }
+  });
+}
