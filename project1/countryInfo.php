@@ -45,26 +45,6 @@ $result = curl_exec($ch);
 curl_close($ch);
 
 $decode = json_decode($result, true);
-// echo '<pre>';
-// print_r($decode);
-// exit;
-
-//  // Get weather information
-//  $weatherUrl = "http://api.geonames.org/weatherJSON?formatted=true&north={$north}&south={$south}&east={$east}&west={$west}&username=mani0924&style=full";
-
-//  $ch = curl_init();
-//  curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-//  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-//  curl_setopt($ch, CURLOPT_URL, $weatherUrl);
-
-//  $result = curl_exec($ch);
-
-//  curl_close($ch);
-
-//  $decode = json_decode($result, true);
-// //  echo '<pre>';
-// // print_r($decode);
-// // exit;
 
 $output['status']['code'] = "200";
 $output['status']['name'] = "ok";

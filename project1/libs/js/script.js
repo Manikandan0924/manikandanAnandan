@@ -26,14 +26,6 @@ var map = L.map("map", {
 
 var layerControl = L.control.layers(basemaps).addTo(map);
 
-
-
-// L.marker([28.1306, 84.6493]).bindPopup("Random marker").addTo(map);
-
-
-
-
-
 // Function to get user's geolocation
 function getUserLocation() {
   if (navigator.geolocation) {
@@ -95,8 +87,8 @@ async function updateDropdownWithUserCountry(latitude, longitude) {
   }
 }
 
-
 var markersLayer = L.layerGroup(); // Create a layer group for markers
+
 // Function to add markers on the selected country
 function addMarkersOnCountry(selected) {
   // Clear existing markers
@@ -175,22 +167,55 @@ function addMarker(e, selected) {
   ).openPopup();
 }
 
-
+// Define a global variable to store markers
+let currentCountryMarkers = null;
 
 $("#countrySelect").on("change", function () {
   let selectedval = this.value;
-  // Clear existing earthquake markers
+
+  // Clear existing markers for the previous country
+  if (currentCountryMarkers) {
+    map.removeLayer(currentCountryMarkers);
+    currentCountryMarkers = null;
+  }
+
+  // Clear existing markers
   markersLayer.clearLayers();
+
   $.ajax({
     url: 'countryInfo.php',
     method: 'GET',
     data: { countryIsoCode: selectedval },
     dataType: 'json',
     success: function (result) {
-    
-        for (let i = 0; i < result.data.earthquakes.length; i++) {
-        L.marker([result.data.earthquakes[i].lat, result.data.earthquakes[i].lng]).addTo(map);
+      // Create new markers for the selected country using MarkerCluster
+      let newMarkers = L.markerClusterGroup();
+
+      for (let i = 0; i < result.data.earthquakes.length; i++) {
+        // Create ExtraMarkers icon
+        var extraMarkerIcon = L.ExtraMarkers.icon({
+          icon: 'fa-number',
+          number: i + 1,
+          shape: 'star',
+          prefix: 'fa'
+        });
+
+        // Create the marker using ExtraMarkers
+        var marker = L.marker(
+          [result.data.earthquakes[i].lat, result.data.earthquakes[i].lng],
+          { icon: extraMarkerIcon }
+        );
+        newMarkers.addLayer(marker);
       }
+
+      // Store the new markers in the global variable
+      currentCountryMarkers = newMarkers;
+
+      // Add the new markers to the map
+      map.addLayer(newMarkers);
+
+      // ... (rest of your code)
+
     },
     error: function (xhr, status, error) {
       console.error('AJAX Error:', status, error);
@@ -231,6 +256,7 @@ $("#countrySelect").on("change", function () {
   map.addLayer(country);
   map.fitBounds(country.getBounds());
 });
+
 
 
 // Function to fetch country information and update the modal content
@@ -489,6 +515,11 @@ function fetchExchangeRates() {
     }
   });
 }
+$(document).on('click', '#close', function () {
+  $('#converterModal').modal('hide');
+});
+
+
 
 // Function to populate "To Currency" options
 function populateCurrencyOptions(exchangeRates) {
@@ -578,3 +609,6 @@ function fetchAndDisplayTimezone(selectedVal) {
     }
   });
 }
+$(document).on('click', '#closeModal', function () {
+  $('#timezoneModal').modal('hide');
+});
