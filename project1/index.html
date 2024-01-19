@@ -99,17 +99,6 @@
                 <!-- continent will be inserted here -->
               </td>
             </tr>
-            <tr>
-              <td class="text-center">
-                <i class="fa-solid fa-street-view fa-xl text-success"></i>
-              </td>
-              <td>
-                Languages
-              </td>
-              <td class="text-end" id="languages">
-                <!-- languages will be inserted here -->
-              </td>
-            </tr>
           </table>
         </div>
         <div class="modal-footer">
@@ -136,12 +125,12 @@
             </td>
             <td id="weatherCondition"></td>
           </tr>
-          <tr>
+          <!-- <tr>
             <td>
               <b>ICAO:</b>
             </td>
             <td id="ICAO"></td>
-          </tr>
+          </tr> -->
           <tr>
             <td>
               <b>Clouds:</b>
@@ -154,12 +143,12 @@
             </td>
             <td id="dewPoint"></td>
           </tr>
-          <tr>
+          <!-- <tr>
             <td>
               <b>Clouds Code:</b>
             </td>
             <td id="cloudsCode"></td>
-          </tr>
+          </tr> -->
           <tr>
             <td>
               <b>Date and Time:</b>
@@ -220,19 +209,20 @@
 
 
 
-<!-- Wikipedia Modal -->
+<!-- Wikipedia Modal (Modified with adjusted smaller image size) -->
 <div class="modal fade" id="wikipediaModal" tabindex="-1" aria-labelledby="wikipediaModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
-      <div class="modal-header bg-primary text-white">
+      <div class="modal-header bg-info text-white">
         <h5 class="modal-title" id="wikipediaModalLabel">Wikipedia Information</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <div class="card border-0">
-          <img id="wikipediaThumbnailImg" src="" alt="Wikipedia Thumbnail" class="card-img-top">
+          <!-- Add specific max-width and max-height styles to limit image size -->
+          <img id="wikipediaThumbnailImg" src="" alt="Wikipedia Thumbnail" class="card-img-top" style="max-width: 200px; max-height: 150px;">
           <div class="card-body">
-            <h5 class="card-title fw-bold fs-4 text-primary" id="wikipediaTitle"></h5>
+            <h5 class="card-title fw-bold fs-4 text-info" id="wikipediaTitle"></h5>
             <p class="card-text lead" id="wikipediaSummary"></p>
             <ul class="list-group list-group-flush">
               <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -242,10 +232,6 @@
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <b>Feature:</b>
                 <span id="wikipediaFeature"></span>
-              </li>
-              <li class="list-group-item d-flex justify-content-between align-items-center">
-                <b>Title:</b>
-                <span id="wikipediatitle"></span>
               </li>
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <b>Country Code:</b>
@@ -261,11 +247,12 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <a id="wikipediaLink" href="#" class="btn btn-primary" target="_blank">Read More on Wikipedia</a>
+        <a id="wikipediaLink" href="#" class="btn btn-info" target="_blank">Read More on Wikipedia</a>
       </div>
     </div>
   </div>
 </div>
+
 
 
 
@@ -303,15 +290,13 @@
 </div>
 
 
-<!-- Simple Modal for Timezone Info -->
+<!-- Refined Modern Timezone Info Modal -->
 <div class="modal fade" id="timezoneModal" tabindex="-1" role="dialog" aria-labelledby="timezoneModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content refined-modal">
       <div class="modal-header">
         <h5 class="modal-title" id="timezoneModalLabel">Timezone Information</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <button type="button" class="btn-close btn-close-white" data-dismiss="modal" aria-label="Close"></button>      
       </div>
       <div class="modal-body">
         <p><strong>Country Name:</strong> <span id="modalCountryName"></span></p>
@@ -322,7 +307,7 @@
         <p><strong>Current Time:</strong> <span id="modalTime"></span></p>
       </div>
       <div class="modal-footer">
-        <button type="button" id = "closeModal" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" id="closeModal" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
@@ -341,12 +326,13 @@
 <!-- Include other scripts -->
 <script type="application/javascript" src="./libs/js/bootstrap.min.js"></script>
 <script type="application/javascript" src="./libs/js/easy-button.min.js"></script>
+<script type="application/javascript" src="fontawesome-free-6.5.1-web/fontawesome-free-6.5.1-web/js/all.js"></script>
 <script type="application/javascript" src="./libs/js/leaflet.extra-markers.js"></script>
 <!-- <script type="application/javascript" src="./libs/js/leaflet.js"></script> -->
 <script type="application/javascript" src="./libs/js/leaflet.markercluster.js"></script>
 <script type="application/javascript" src="./libs/js/toastify.min.js"></script>
 <script type="application/javascript" src="./libs/js/script.js"></script>
-<script type="application/javascript" src="fontawesome-free-6.5.1-web/fontawesome-free-6.5.1-web/js/all.js"></script>
+
     
 </body>
 </html>

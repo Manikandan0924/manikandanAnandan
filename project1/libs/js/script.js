@@ -78,7 +78,7 @@ async function updateDropdownWithUserCountry(latitude, longitude) {
       $("#countrySelect").val(isoCode).change();
 
       // Add markers on the selected country
-      addMarkersOnCountry(data);
+      // addMarkersOnCountry(data);
     } else {
       console.error("Invalid or missing data in reverse geocoding response:", data);
     }
@@ -90,36 +90,36 @@ async function updateDropdownWithUserCountry(latitude, longitude) {
 var markersLayer = L.layerGroup(); // Create a layer group for markers
 
 // Function to add markers on the selected country
-function addMarkersOnCountry(selected) {
-  // Clear existing markers
-  markersLayer.clearLayers();
+// function addMarkersOnCountry(selected) {
+//   // Clear existing markers
+//   markersLayer.clearLayers();
 
-  // Check if the necessary properties exist in the response
-  if (selected && (selected.geometry || selected[0] || (selected.lat && selected.lon))) {
-    var coordinates;
+//   // Check if the necessary properties exist in the response
+//   if (selected && (selected.geometry || selected[0] || (selected.lat && selected.lon))) {
+//     var coordinates;
 
-    // Check for different response structures
-    if (selected.geometry && selected.geometry.coordinates) {
-      coordinates = selected.geometry.coordinates;
-    } else if (selected[0] && selected[0].geometry && selected[0].geometry.coordinates) {
-      coordinates = selected[0].geometry.coordinates;
-    } else if (selected.lat && selected.lon) {
-      coordinates = [parseFloat(selected.lon), parseFloat(selected.lat)];
-    } else {
-      console.error("Invalid or missing geometry data in reverse geocoding response:", selected);
-      return;
-    }
+//     // Check for different response structures
+//     if (selected.geometry && selected.geometry.coordinates) {
+//       coordinates = selected.geometry.coordinates;
+//     } else if (selected[0] && selected[0].geometry && selected[0].geometry.coordinates) {
+//       coordinates = selected[0].geometry.coordinates;
+//     } else if (selected.lat && selected.lon) {
+//       coordinates = [parseFloat(selected.lon), parseFloat(selected.lat)];
+//     } else {
+//       console.error("Invalid or missing geometry data in reverse geocoding response:", selected);
+//       return;
+//     }
 
-    // Create a marker using the extracted coordinates
-    var marker = L.marker([coordinates[1], coordinates[0]]); // Swap lat and lon
-    markersLayer.addLayer(marker);
+//     // Create a marker using the extracted coordinates
+//     // var marker = L.marker([coordinates[1], coordinates[0]]); // Swap lat and lon
+//     // markersLayer.addLayer(marker);
 
-    // Add the markers layer to the map
-    markersLayer.addTo(map);
-  } else {
-    console.error("Invalid or missing data in reverse geocoding response:", selected);
-  }
-}
+//     // // Add the markers layer to the map
+//     // markersLayer.addTo(map);
+//   } else {
+//     console.error("Invalid or missing data in reverse geocoding response:", selected);
+//   }
+// }
 
 // Call the function to get user's location when the page loads
 window.onload = function () {
@@ -154,17 +154,17 @@ $(document).ready(function () {
 var marker;
 
 function addMarker(e, selected) {
-  console.log(e.latlng, selected);
+  // console.log(e.latlng, selected);
   // Add marker to map at click location; add popup window
   marker = new L.Marker(e.latlng, { draggable: true });
-  map.addLayer(marker);
-  marker.bindPopup(
-    "<label>country: </label><b>" +
-      selected[0].countryName +
-      "</b><br/><label>Isocode: </label><b>" +
-      selected[0].isoCode +
-      "</b>"
-  ).openPopup();
+  // map.addLayer(marker);
+  // marker.bindPopup(
+  //   "<label>country: </label><b>" +
+  //     selected[0].countryName +
+  //     "</b><br/><label>Isocode: </label><b>" +
+  //     selected[0].isoCode +
+  //     "</b>"
+  // ).openPopup();
 }
 
 // Define a global variable to store markers
@@ -190,38 +190,55 @@ $("#countrySelect").on("change", function () {
     success: function (result) {
       // Create new markers for the selected country using MarkerCluster
       let newMarkers = L.markerClusterGroup();
-
+  
       for (let i = 0; i < result.data.earthquakes.length; i++) {
+        // Extract earthquake data
+        let earthquake = result.data.earthquakes[i];
+        let lat = earthquake.lat;
+        let lng = earthquake.lng;
+        let magnitude = earthquake.magnitude;
+        let datetime = earthquake.datetime;
+  
         // Create ExtraMarkers icon
         var extraMarkerIcon = L.ExtraMarkers.icon({
-          icon: 'fa-number',
+          icon: 'fa-bolt',
           number: i + 1,
           shape: 'star',
           prefix: 'fa'
         });
-
+  
         // Create the marker using ExtraMarkers
         var marker = L.marker(
-          [result.data.earthquakes[i].lat, result.data.earthquakes[i].lng],
+          [lat, lng],
           { icon: extraMarkerIcon }
         );
+  
+        // Create a popup content string
+        var popupContent = `<strong>Latitude:</strong> ${lat.toFixed(2)}<br>`;
+        popupContent += `<strong>Longitude:</strong> ${lng.toFixed(2)}<br>`;
+        popupContent += `<strong>Magnitude:</strong> ${magnitude}<br>`;
+        popupContent += `<strong>Datetime:</strong> ${datetime}`;
+        
+  
+        // Bind the popup to the marker
+        marker.bindPopup(popupContent);
+  
+        // Add the marker to the newMarkers cluster
         newMarkers.addLayer(marker);
       }
-
+  
       // Store the new markers in the global variable
       currentCountryMarkers = newMarkers;
-
+  
       // Add the new markers to the map
       map.addLayer(newMarkers);
-
+  
       // ... (rest of your code)
-
     },
     error: function (xhr, status, error) {
       console.error('AJAX Error:', status, error);
     }
   });
-
   let countriesList = JSON.parse(localStorage.getItem("countriesList"));
   let selectedCountry = countriesList.filter(
     (country) => country.isoCode === selectedval
@@ -259,7 +276,11 @@ $("#countrySelect").on("change", function () {
 
 
 
-// Function to fetch country information and update the modal content
+function formatPopulation(population) {
+  return population.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+
 function fetchCountryInfo(selectedVal) {
   if (selectedVal) {
     // AJAX call to fetch country information
@@ -275,13 +296,15 @@ function fetchCountryInfo(selectedVal) {
         // Update modal content with country information
         $("#countryName").text(countryData.countryName);
         $("#capital").text(countryData.capital);
-        $("#population").text(countryData.population);
+        
+        // Format population using the formatPopulation function
+        $("#population").text(formatPopulation(countryData.population));
+        
         $("#currencyCode").text(countryData.currencyCode);
         $("#continent").text(countryData.continent);
-        $("#languages").text(countryData.languages);
 
-        // Log population value for debugging
-        console.log(countryData.population);
+        // Log formatted population value for debugging
+        console.log(formatPopulation(countryData.population));
 
         // Add more fields as needed
 
@@ -313,6 +336,7 @@ var countryInfoButton = L.easyButton({
 countryInfoButton.addTo(map);
 
 
+
 // Function to fetch and display weather information in the Weather Modal
 function fetchAndDisplayWeather(selectedVal) {
   if (selectedVal) {
@@ -333,10 +357,10 @@ function fetchAndDisplayWeather(selectedVal) {
 
           // Update Weather Modal content
           $("#weatherCondition").text(latestObservation.weatherCondition);
-          $("#ICAO").text(latestObservation.ICAO);
+          // $("#ICAO").text(latestObservation.ICAO);
           $("#clouds").text(latestObservation.clouds);
           $("#dewPoint").text(latestObservation.dewPoint + ' °C');
-          $("#cloudsCode").text(latestObservation.cloudsCode);
+          // $("#cloudsCode").text(latestObservation.cloudsCode);
           $("#datetime").text(latestObservation.datetime);
           $("#temperature").text(latestObservation.temperature + ' °C');
           $("#humidity").text(latestObservation.humidity + '%');
@@ -449,7 +473,7 @@ var exchangeRates; // Global variable to store exchange rates
 var currencyConverterButton = L.easyButton({
   states: [
     {
-      icon: "fas fa-money",
+      icon: "fa-solid fa-coins",
       title: "Open Currency Converter",
       onClick: function (btn, map) {
         selectedVal = $("#countrySelect").val(); // Set the initial selected country
