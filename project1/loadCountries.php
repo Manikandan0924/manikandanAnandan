@@ -3,8 +3,6 @@ $geojsonFilePath = 'countryBorders.geo.json';
 if (file_exists($geojsonFilePath)) {
     $geojson = file_get_contents($geojsonFilePath);
     $data = json_decode($geojson, true);
-    // echo("<script>console.log('PHP: " . json_encode($data) . "');</script>");
-    // Extract ISO code and name for inclusion in <select>
     $countries = array();
     foreach ($data['features'] as $feature) {
         $isoCode = isset($feature['properties']['iso_a2']) ? $feature['properties']['iso_a2'] : null;

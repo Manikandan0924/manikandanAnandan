@@ -11,8 +11,8 @@ if (isset($_GET['countryIsoCode'])) {
     $countryCode = $_GET['countryIsoCode'];
 
     // Construct the GeoNames API URL for country information
-    $url = "http://api.geonames.org/countryInfoJSON?formatted=true&lang=it&country={$countryCode}&username=mani0924&style=full";
-
+    $url = "http://api.geonames.org/countryInfoJSON?formatted=true&lang=en&country={$countryCode}&username=mani0924&style=full";
+   
     // Initialize cURL session
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -27,9 +27,9 @@ if (isset($_GET['countryIsoCode'])) {
 
     // Decode the JSON result
     $decode = json_decode($result, true);
-// echo '<pre>';
-// print_r($decode);
-// exit;
+    // echo '<pre>';
+    // print_r($decode);
+    // exit;
 
 
     // Prepare the output response
@@ -45,4 +45,3 @@ if (isset($_GET['countryIsoCode'])) {
     // Output the JSON response
     echo json_encode($output);
 }
-?>

@@ -1,3 +1,27 @@
+  #preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #status {
+    text-align: center;
+  }
+
+  .spinner-border {
+    width: 3rem;
+    height: 3rem;
+  }
+
+
+
 html, body {
   margin: 0;
   padding: 0;
@@ -87,4 +111,238 @@ html, body {
 
 .refined-modal .btn-secondary:hover {
   background-color: #221f51;
+}
+
+
+/* CSS for Currency Calculator Modal */
+#currencyModal .modal-dialog {
+  max-width: 400px;
+}
+
+#currencyModal .modal-content {
+  border-radius: 20px;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+}
+
+#currencyModal .modal-header {
+  background-color: #5bc0de; /* Sky Blue */
+  color: #ffffff; /* White */
+  border-radius: 20px 20px 0 0;
+  padding: 20px;
+}
+
+#currencyModal .modal-title {
+  font-weight: bold;
+}
+
+#currencyModal .modal-body {
+  padding: 20px;
+}
+
+#currencyModal .form-floating {
+  margin-bottom: 20px;
+}
+
+#currencyModal .form-control {
+  border-radius: 10px;
+}
+
+#currencyModal .form-select {
+  border-radius: 10px;
+}
+
+#currencyModal .modal-footer {
+  border: none;
+  padding: 15px 20px;
+}
+
+#currencyModal .btn-close {
+  color: #ffffff; /* White */
+}
+
+#currencyModal .btn-outline-secondary {
+  background-color: #5bc0de; /* Sky Blue */
+  color: #ffffff; /* White */
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  transition: background-color 0.3s;
+}
+
+#currencyModal .btn-outline-secondary:hover {
+  background-color: #31b0d5; /* Lighter Sky Blue */
+}
+
+
+
+/* weather */
+
+/* html, body {
+  background-color: #F9F6EE;
+  margin: 5px;
+  padding: 5px;
+} */
+
+#pre-load {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  overflow: hidden;
+  background: #fff;
+}
+
+#pre-load:before {
+    content: "";
+    position: fixed;
+    top: calc(50% - 30px);
+    left: calc(50% - 30px);
+    border: 6px solid #f2f2f2;
+    border-top: 6px solid #56829e;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    -webkit-animation: animate-preloader 1s linear infinite;
+    animation: animate-preloader 1s linear infinite;
+}
+
+@-webkit-keyframes animate-preloader {
+    0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+    }
+    100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+    }
+    }
+    @keyframes animate-preloader {
+    0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+    }
+    100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+    }
+}
+
+.modal-body {
+  overflow: hidden;
+  min-height: 350px;
+}
+
+.fadeOut {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s 1s, opacity 1s linear;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+}
+
+
+
+/* Modal Content */
+.modal-content {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Modal Header */
+.modal-header {
+  background-color: #56829e;
+  color: #fff;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+/* Modal Body */
+.modal-body {
+  padding: 20px;
+  overflow: hidden;
+}
+
+/* Today's Forecast */
+.today-forecast {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.today-forecast img {
+  max-width: 100px;
+}
+
+/* Day Forecast */
+.day-forecast {
+  margin-top: 20px;
+}
+
+.day-forecast .date {
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.day-forecast .temperature {
+  font-size: 16px;
+}
+
+.day-forecast img {
+  max-width: 50px;
+}
+
+/* Last Updated */
+.last-updated {
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* Preloader */
+#pre-load {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  width: 60px;
+  height: 60px;
+}
+
+#pre-load:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border: 6px solid #f2f2f2;
+  border-top: 6px solid #56829e;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: animate-preloader 1s linear infinite;
+}
+
+@keyframes animate-preloader {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Footer */
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #56829e;
+  color: #fff;
+  text-align: center;
+  padding: 10px 0;
 }

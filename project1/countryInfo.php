@@ -11,7 +11,7 @@ $executionStartTime = microtime(true);
 if (isset($_GET['countryIsoCode'])) {
     $countryCode = $_GET['countryIsoCode'];
 
-    $url = "http://api.geonames.org/countryInfoJSON?formatted=true&lang=it&country={$countryCode}&username=mani0924&style=full";
+    $url = "http://api.geonames.org/countryInfoJSON?formatted=true&lang=en&country={$countryCode}&username=mani0924&style=full";
 
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
