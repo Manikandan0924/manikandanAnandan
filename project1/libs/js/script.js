@@ -413,16 +413,21 @@ function fetchWeatherInfo(countryName) {
             $('#weatherModalLabel').text(weatherData.location.name + ', ' + weatherData.location.country);
             $('#todayConditions').text(weatherData.current.condition.text);
             $('#todayIcon').attr('src', 'https:' + weatherData.current.condition.icon);
-            $('#todayMaxTemp').text(weatherData.forecast.forecastday[0].day.maxtemp_c + ' °C');
-            $('#todayMinTemp').text(weatherData.forecast.forecastday[0].day.mintemp_c + ' °C');
+            // Remove decimal places from today's max and min temperatures
+            $('#todayMaxTemp').text(parseInt(weatherData.forecast.forecastday[0].day.maxtemp_c));
+            $('#todayMinTemp').text(parseInt(weatherData.forecast.forecastday[0].day.mintemp_c));
+
+
+            
     
             // Check if forecast data is available for the current day
             if (weatherData.forecast.forecastday.length >= 1) {
                 // Update day 1 forecast
                 $('#day1Date').text(new Date(weatherData.forecast.forecastday[0].date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' }));
                 $('#day1Icon').attr('src', 'https:' + weatherData.forecast.forecastday[0].day.condition.icon);
-                $('#day1MaxTemp').text(weatherData.forecast.forecastday[0].day.maxtemp_c + ' °C');
-                $('#day1MinTemp').text(weatherData.forecast.forecastday[0].day.mintemp_c + ' °C');
+                // Remove decimal places from day 1 max and min temperatures
+                $('#day1MaxTemp').text(parseInt(weatherData.forecast.forecastday[0].day.maxtemp_c));
+                $('#day1MinTemp').text(parseInt(weatherData.forecast.forecastday[0].day.mintemp_c));
             } else {
                 console.warn('Insufficient forecast data for the current day');
                 // Display a message indicating insufficient forecast data
@@ -442,8 +447,6 @@ function fetchWeatherInfo(countryName) {
             $('#weatherModal .modal-title').text('Error retrieving data');
         }
     },
-    
-    
       
       error: function(jqXHR, textStatus, errorThrown) {
         console.error('Error fetching weather information:', errorThrown);
