@@ -119,31 +119,35 @@ $(document).ready(function () {
 });
 
 // Function to update country dropdown based on user's location
-async function updateDropdownWithUserCountry(latitude, longitude) {
-  try {
-    const data = await $.ajax({
-      url: `http://api.geonames.org/countryCodeJSON?formatted=true&lat=${latitude}&lng=${longitude}&username=mani0924&style=full`,
-      method: "POST",
+function updateDropdownWithUserCountry(latitude, longitude) {
+  $.ajax({
+      url: "countryCode.php",
+      method: "GET",
       dataType: "json",
       data: {
-        lat: latitude,
-        lon: longitude,
+          latitude: latitude,
+          longitude: longitude
       },
-    });
-
-    if (data && data.countryCode) {
-      var isoCode = data.countryCode.toUpperCase();
-      $("#countrySelect").val(isoCode).change();
-      isoCodeToCountryName(isoCode, function(selectedCountryName) {
-          addAirportMarkers(selectedCountryName);
-      });
-    } else {
-      console.error("Invalid or missing data from GeoNames API");
-    }
-  } catch (error) {
-    console.error("Error in AJAX request:", error);
-  }
+      success: function(data) {
+          if (data && data.countryCode) {
+              var isoCode = data.countryCode.toUpperCase();
+              $("#countrySelect").val(isoCode).change();
+              isoCodeToCountryName(isoCode, function(selectedCountryName) {
+                  addAirportMarkers(selectedCountryName);
+              });
+          } else {
+              console.error("Invalid or missing data from GeoNames API");
+          }
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+          console.error('Error fetching country data:', errorThrown);
+      }
+  });
 }
+
+    
+  
+
 
 // Function to convert ISO code to country name
 function isoCodeToCountryName(isoCode, callback) {
