@@ -8,34 +8,33 @@ function generatePersonnelSearchTable(data) {
     let tableHtml = '';
     // Check if data is not empty and if 'found' property exists
     if (data && data.found) {
-
-        let key = 1;
         // Add table rows with data and edit/delete buttons
         data.found.forEach(entry => {
             tableHtml += '<tr>';
-            tableHtml += `<td>${key++}</td>`;
-            tableHtml += `<td>${entry.firstName}</td>`;
-            tableHtml += `<td>${entry.lastName}</td>`;
-            tableHtml += `<td>${entry.email}</td>`;
+            tableHtml += `<td>${entry.lastName}, ${entry.firstName}</td>`;
             tableHtml += `<td>${entry.departmentName}</td>`; // Use departmentName instead of department
             tableHtml += `<td>${entry.locationName}</td>`; // Use locationName instead of location
-            // tableHtml += `<td>${entry.departmentID}</td>`; // Display departmentID
-            // tableHtml += `<td>${entry.locationID}</td>`; // Display locationID
-            tableHtml += '<td>';
+            tableHtml += `<td>${entry.email}</td>`;
+            tableHtml += '<td class="text-end">';
             // Edit button
-            tableHtml += `<button class="btn btn-primary btn-sm edit-btn Personnel-edit-btn" 
-            data-email="${entry.email}" data-departmentID="${entry.departmentID}" data-firstName="${entry.firstName}" data-lastName="${entry.lastName}" data-jobTitle="${entry.jobTitle}"
-            data-id="${entry.id}"><i class="fa-solid fa-pencil fa-fw"></i></button>`;
+            tableHtml += `
+              <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editPersonnelModal" data-id="${entry.id}">
+                <i class="fa-solid fa-pencil fa-fw"></i>
+              </button>`;
             // Add some space between the buttons
-            tableHtml += '&nbsp;';
+            // tableHtml += '&nbsp;';
             // Delete button
-            tableHtml += `<button class="btn btn-danger btn-sm delete-btn Personnel-delete-btn" data-name="${entry.firstName} ${entry.lastName}" data-id="${entry.id}"><i class="fa-solid fa-trash fa-fw"></i></button>`;
+            tableHtml += `
+              <button type="button" class="btn btn-primary btn-sm deletePersonnelBtn" data-id="${entry.id}">
+                <i class="fa-solid fa-trash fa-fw"></i>
+              </button>`;
+              
             tableHtml += '</td>';
             tableHtml += '</tr>';
         });
     } else {
         // If no data is found, display a message
-        tableHtml += '<tr><td colspan="6">No results found.</td></tr>';
+        tableHtml += '<tr><td colspan="7">No results found.</td></tr>';
     }
 
     // Update the personnel table body with the generated HTML
@@ -45,28 +44,32 @@ function generatePersonnelSearchTable(data) {
 // Function to generate search table for departments
 function generateDepartmentSearchTable(data) {
     let tableHtml = '';
-    let key = 1; // Initialize a variable to keep track of the incrementing value
     // Check if data is not empty and if 'found' property exists
     if (data && data.found) {
         // Add table rows with department details
         data.found.forEach(department => {
             tableHtml += '<tr>';
-            tableHtml += `<td>${key++}</td>`;
             tableHtml += `<td>${department.name}</td>`;
             tableHtml += `<td>${department.locationName}</td>`; // Display department location
-            tableHtml += '<td>';
-             // Edit button
-             tableHtml += `<button class="btn btn-primary btn-sm Department-edit-btn" data-id="${department.id}"><i class="fa-solid fa-pencil fa-fw"></i></button>`;
-             // Add some space between the buttons
-            tableHtml += '&nbsp;';
-             // Delete button
-             tableHtml += `<button class="btn btn-danger btn-sm Department-delete-btn" data-id="${department.id}"><i class="fa-solid fa-trash fa-fw"></i></button>`;
-             tableHtml += '</td>';
-             tableHtml += '</tr>';
+            tableHtml += '<td class="text-end">';
+            // Edit button
+            tableHtml += `
+               <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editDepartmentModal" data-id="${department.id}">
+                 <i class="fa-solid fa-pencil fa-fw"></i>
+               </button>`;
+            // Add some space between the buttons
+            // tableHtml += '&nbsp;';
+            // Delete button
+            tableHtml += `
+               <button type="button" class="btn btn-primary btn-sm Department-delete-btn" data-id="${department.id}">
+                 <i class="fa-solid fa-trash fa-fw"></i>
+               </button>`;
+            tableHtml += '</td>';
+            tableHtml += '</tr>';
         });
     } else {
         // If no data is found, display a message
-        tableHtml += '<tr><td colspan="6">No results found.</td></tr>';
+        tableHtml += '<tr><td colspan="4">No results found.</td></tr>';
     }
 
     // Update the department table body with the generated HTML
@@ -76,72 +79,69 @@ function generateDepartmentSearchTable(data) {
 // Function to generate search table for locations
 function generateLocationSearchTable(data) {
     let tableHtml = '';
-    let key = 1; // Initialize a variable to keep track of the incrementing value
     // Check if data is not empty and if 'found' property exists
     if (data && data.found) {
         // Add table rows with data and edit/delete buttons
         data.found.forEach(location => {
             tableHtml += '<tr>';
-            tableHtml += `<td>${key++}</td>`; // Use locationid instead of id
             tableHtml += `<td>${location.locationname}</td>`; // Use locationname instead of locationName
-            tableHtml += '<td>';
-           // Edit button
-           tableHtml += `<button class="btn btn-primary btn-sm edit-btn Location-edit-btn" data-id="${location.locationid}"><i class="fa-solid fa-pencil fa-fw"></i></button>`;
-           // Add some space between the buttons
-           tableHtml += '&nbsp;';
-           // Delete button
-           tableHtml += `<button class="btn btn-danger btn-sm delete-btn Location-delete-btn" data-id="${location.locationid}"><i class="fa-solid fa-trash fa-fw"></i></button>`;
-           tableHtml += '</td>';
-           tableHtml += '</tr>';
+            tableHtml += '<td class="text-end">';
+            // Edit button
+            tableHtml += `
+               <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editLocationModal" data-id="${location.locationid}">
+                 <i class="fa-solid fa-pencil fa-fw"></i>
+               </button>`;
+            // Add some space between the buttons
+            // tableHtml += '&nbsp;';
+            // Delete button
+            tableHtml += `
+               <button type="button" class="btn btn-primary btn-sm Location-delete-btn" data-id="${location.locationid}">
+                 <i class="fa-solid fa-trash fa-fw"></i>
+               </button>`;
+            tableHtml += '</td>';
+            tableHtml += '</tr>';
         });
     } else {
         // If no data is found, display a message
-        tableHtml += '<tr><td colspan="6">No results found.</td></tr>';
+        tableHtml += '<tr><td colspan="3">No results found.</td></tr>';
     }
 
     // Update the location table body with the generated HTML
     $('#locationTableBody').html(tableHtml);
 }
 
-
 // Function to fetch and generate search table
 function fetchAndGenerateSearchTable(searchText, searchType) {
-
-    // if(searchText != ''){
-
-        $.ajax({
-            url: "php/searchAll.php",
-            type: "GET",
-            dataType: "json",
-            data: {
-                txt: searchText,
-                type: searchType // Add search type parameter
-            },
-            success: function (response) {
-                // Handle the response data here
-                // // // console.log(response);
-                // Update the table with the search results
-                switch (searchType) {
-                    case 'personnel':
-                        generatePersonnelSearchTable(response.data);
-                        break;
-                    case 'department':
-                        generateDepartmentSearchTable(response.data);
-                        break;
-                    case 'location':
-                        generateLocationSearchTable(response.data);
-                        break;
-                    default:
-                        // // // console.error('Invalid search type:', searchType);
-                }
-            },
-            error: function (xhr, status, error) {
-                // Handle errors here
-                // // console.error(error);
+    $.ajax({
+        url: "php/searchAll.php",
+        type: "GET",
+        dataType: "json",
+        data: {
+            txt: searchText,
+            type: searchType // Add search type parameter
+        },
+        success: function (response) {
+            // Handle the response data here
+            switch (searchType) {
+                case 'personnel':
+                    generatePersonnelSearchTable(response.data);
+                    break;
+                case 'department':
+                    generateDepartmentSearchTable(response.data);
+                    break;
+                case 'location':
+                    generateLocationSearchTable(response.data);
+                    break;
+                default:
+                    // Handle default case
+                    break;
             }
-        });
-    // }
-
+        },
+        error: function (xhr, status, error) {
+            // Handle errors here
+            console.error(error);
+        }
+    });
 }
 
 // Search functionality
@@ -170,44 +170,40 @@ refreshTableBasedOnSearchType();
 
 
 
+  // Function to generate personnel table
+function generatePersonnelTable(data, tableBodyId) {
+    let tableHtml = '';
+    // let key = 1; // Initialize a variable to keep track of the incrementing value
 
-    // Function to generate table
-    function generatePersonnelTable(data, tableBodyId) {
-        // Sort data by ID in ascending order
-        data.sort((a, b) => a.id - b.id);
-        let key = 1; // Initialize a variable to keep track of the incrementing value
+    // Add table rows with data and edit/delete buttons
+    data.forEach(entry => {
+        tableHtml += '<tr>';
+        // tableHtml += `<td>${key++}</td>`;
+        tableHtml += `<td>${entry.lastName}, ${entry.firstName}</td>`;
+        // tableHtml += `<td>${entry.firstName}</td>`;
+        tableHtml += `<td>${entry.department}</td>`; // Use department instead of departmentName
+        tableHtml += `<td>${entry.location}</td>`; // Use location instead of locationName
 
-        let tableHtml = '';
-        // Add table rows with data and edit/delete buttons
-        data.forEach(entry => {
-            tableHtml += '<tr>';
-            tableHtml += `<td>${key++}</td>`;
-            tableHtml += `<td>${entry.firstName}</td>`;
-            tableHtml += `<td>${entry.lastName}</td>`;
-            tableHtml += `<td>${entry.email}</td>`;
-            tableHtml += `<td>${entry.department}</td>`; // Use department instead of departmentName
-            tableHtml += `<td>${entry.location}</td>`; // Use location instead of locationName
-            tableHtml += '<td>';
-            // Edit button
-            tableHtml += `<button class="btn btn-primary btn-sm Personnel-edit-btn"
-            data-email="${entry.email}" data-departmentID="${entry.department}" data-firstName="${entry.firstName}" data-lastName="${entry.lastName}"
-             data-id="${entry.id}"><i class="fa-solid fa-pencil fa-fw"></i></button>`;
-            // Add some space between the buttons
-            tableHtml += '&nbsp;';
-            // Delete button
-            tableHtml += `<button class="btn btn-danger btn-sm Personnel-delete-btn" data-name="${entry.firstName} ${entry.lastName}"  data-id="${entry.id}"><i class="fa-solid fa-trash fa-fw"></i></button>`;
-            tableHtml += '</td>';
-            tableHtml += '</tr>';
-        });
+        tableHtml += `<td>${entry.email}</td>`;
+        
+        tableHtml += '<td class="text-end">'; // Align buttons to the right
+        // Edit button with data attributes
+        tableHtml += `<button class="btn btn-primary btn-sm Personnel-edit-btn"
+        data-id="${entry.id}" data-email="${entry.email}" data-firstName="${entry.firstName}" data-lastName="${entry.lastName}" data-department="${entry.department}" data-location="${entry.location}">
+        <i class="fa-solid fa-pencil fa-fw"></i></button>`;
+        // Add some space between the buttons
+        tableHtml += '&nbsp;';
+        // Delete button with data attributes
+        tableHtml += `<button class="btn btn-primary btn-sm Personnel-delete-btn"
+        data-id="${entry.id}" data-name="${entry.firstName} ${entry.lastName}">
+        <i class="fa-solid fa-trash fa-fw"></i></button>`;
+        tableHtml += '</td>';
+        tableHtml += '</tr>';
+    });
 
-        // Update the table body with the generated HTML
-        $('#' + tableBodyId).html(tableHtml);
-    }
-
-
-
-
-
+    // Update the table body with the generated HTML
+    $('#' + tableBodyId).html(tableHtml);
+}
 
 
     
@@ -267,6 +263,73 @@ function populatePersonnelDepartmentDropdown() {
 }
 
 
+
+
+      // Event listener for filter button click to open the modal
+      $('#filterBtn').click(function () {
+        $('#filterModal').modal('show'); // Manually show the filter modal
+      });
+      
+      // Event listener for filter modal shown event
+      $('#filterModal').on('show.bs.modal', function (e) {
+        // Populate department dropdown when filter modal is shown
+        populateFilterDepartmentDropdown();
+      });
+      
+      // Event listener for apply filter button click
+      $('#applyFilterBtn').click(function () {
+        var selectedDepartment = $('#departmentSelect').val();
+        // Call a function to fetch and generate filtered table based on selectedDepartment
+        // Pass selectedDepartment to the server-side script to filter data
+        fetchAndGenerateFilteredTable(selectedDepartment);
+        // Close the filter modal
+        $('#filterModal').modal('hide');
+      });
+      
+      // Function to populate department dropdown in the filter modal
+      function populateFilterDepartmentDropdown() {
+        $.ajax({
+            url: "php/getAllDepartments.php", // Update URL to match the PHP file for fetching all departments
+            type: "GET",
+            dataType: "json",
+            success: function(response) {
+                // Clear existing dropdown options
+                $('#departmentSelect').empty();
+                // Populate dropdown with fetched departments
+                $.each(response.data, function(index, department) {
+                    $('#departmentSelect').append($('<option>', {
+                        value: department.name, // Use department name instead of ID
+                        text: department.name
+                    }));
+                });
+            },
+            error: function(xhr, status, error) {
+                // Handle error if needed
+            }
+        });
+      }
+      
+      // Function to fetch and generate filtered table based on selected department
+      function fetchAndGenerateFilteredTable(selectedDepartment) {
+        $.ajax({
+            url: "php/getFilteredPersonnel.php", // Update URL to match the PHP file for fetching filtered personnel
+            type: "GET",
+            dataType: "json",
+            data: {
+                departmentName: selectedDepartment // Send department name instead of ID
+            },
+            success: function (response) {
+                // Handle the response data here
+                generatePersonnelTable(response.data, 'personnelTableBody');
+            },
+            error: function (xhr, status, error) {
+                // Handle errors here
+            }
+        });
+      }
+      
+      
+      
 
 
    // Function to handle the submission of the "Add Personnel" form
@@ -342,8 +405,11 @@ $(document).on('click', '.Personnel-edit-btn', function() {
     });
 });
 
-// Function to populate the edit personnel modal
 function openEditPersonnelModal(personnelId, firstName, lastName, email, departmentId, departmentData) {
+    // console.log("Personnel ID:", personnelId);
+    // console.log("Department ID:", departmentId);
+    // console.log("Department Data:", departmentData);
+
     $('#editPersonnelID').val(personnelId);
     $('#editPersonnelFirstName').val(firstName);
     $('#editPersonnelLastName').val(lastName);
@@ -359,8 +425,9 @@ function openEditPersonnelModal(personnelId, firstName, lastName, email, departm
             text: department.name
         });
 
-        // Set selected attribute if it matches the personnel's department
-        if (department.name === departmentId) {
+        // Set selected attribute if it matches the personnel's department ID
+        if (department.id === departmentId) {
+            console.log("Match found for department ID:", department.id);
             option.attr('selected', 'selected');
         }
 
@@ -479,27 +546,32 @@ function deletePersonnel(personnelId, personnelName) {
 // Function to generate department table
 function generateDepartmentTable(data) {
     let tableHtml = '';
-    let key = 1; // Initialize a variable to keep track of the incrementing value
+    // let key = 1; // Initialize a variable to keep track of the incrementing value
 
     // Add table rows with department details
     data.forEach(department => {
         tableHtml += '<tr>';
-        tableHtml += `<td>${key++}</td>`;
+        // tableHtml += `<td>${key++}</td>`;
         tableHtml += `<td>${department.name}</td>`;
         tableHtml += `<td>${department.locationName}</td>`; // Display department location
-        tableHtml += '<td>';
-        // Edit button with data attributes for name and locationName
-        tableHtml += `<button class="btn btn-primary btn-sm Department-edit-btn" data-departmentlocationname="${department.locationName}" data-id="${department.id}" data-name="${department.name}" data-locationName="${department.locationName}"><i class="fa-solid fa-pencil fa-fw"></i></button>`;
+        tableHtml += '<td class="text-end">'; // Align buttons to the right
+        // Edit button with data attributes
+        tableHtml += `<button class="btn btn-primary btn-sm Department-edit-btn" data-id="${department.id}" data-name="${department.name}" data-locationName="${department.locationName}">
+        <i class="fa-solid fa-pencil fa-fw"></i></button>`;
         // Add some space between the buttons
         tableHtml += '&nbsp;';
-        // Delete button with data attributes for name and locationName
-        tableHtml += `<button class="btn btn-danger btn-sm Department-delete-btn" data-id="${department.id}" data-name="${department.name}" data-locationName="${department.locationName}"><i class="fa-solid fa-trash fa-fw"></i></button>`;
+        // Delete button with data attributes
+        tableHtml += `<button class="btn btn-primary btn-sm Department-delete-btn" data-id="${department.id}" data-name="${department.name}" data-locationName="${department.locationName}">
+        <i class="fa-solid fa-trash fa-fw"></i></button>`;
         tableHtml += '</td>';
         tableHtml += '</tr>';
     });
+
     // Update the department table body with the generated HTML
     $('#departmentTableBody').html(tableHtml);
 }
+
+
 
 // Function to fetch and generate department table
 function fetchAndGenerateDepartmentTable(searchText) {
@@ -555,6 +627,7 @@ $('#addDepartmentModal').on('shown.bs.modal', function (e) {
     // Populate the department location dropdown when the modal is shown
     populateDepartmentLocationDropdown();
 });
+
 // Event listener for edit button click
 $(document).on('click', '.Department-edit-btn', function() {
     var departmentId = $(this).data('id');
@@ -580,35 +653,27 @@ $(document).on('click', '.Department-edit-btn', function() {
     });
 });
 
-function openEditDepartmentModal(departmentId, departmentName, locationName,departmentlocationname) {
+function openEditDepartmentModal(departmentId, departmentName, locationData, departmentLocationName) {
     $('#editDepartmentId').val(departmentId);
     $('#editDepartmentName').val(departmentName);
-    // alert(departmentName);
+
     // Clear previous options
     $('#editDepartmentLocationDropdown').empty();
 
-    // Check if locationName is an array
-    if (Array.isArray(locationName)) {
-        // Iterate over the array and append options
-        $.each(locationName, function(index, location) {
-            var option = $('<option>', {
-                value: location.locationid,
-                text: location.locationname
-            });
-            // Check if current location matches departmentName and set selected attribute
-            if (location.locationname === departmentlocationname) {
-                option.attr('selected', 'selected');
-            }
-            $('#editDepartmentLocationDropdown').append(option);
+    // Populate dropdown with fetched locations
+    $.each(locationData, function(index, location) {
+        var option = $('<option>', {
+            value: location.locationid,
+            text: location.locationname
         });
-    } else {
-        // If locationName is not an array, assume it's a single location name
-        $('#editDepartmentLocationDropdown').append($('<option>', {
-            value: departmentName,
-            text: departmentName,
-            selected: 'selected'
-        }));
-    }
+        
+        // Check if current location matches departmentLocationName and set selected attribute
+        if (location.locationname === departmentLocationName) {
+            option.attr('selected', 'selected');
+        }
+        
+        $('#editDepartmentLocationDropdown').append(option);
+    });
 
     $('#editDepartmentModal').modal('show');
 }
@@ -774,21 +839,25 @@ $("#saveDepartmentBtn").click(function () {
 // Function to generate location table
 function generateLocationTable(data) {
     let tableHtml = '';
-    let key = 1; // Initialize a variable to keep track of the incrementing value
+    // let key = 1; // Initialize a variable to keep track of the incrementing value
     data.forEach(location => {
         tableHtml += '<tr>';
-        tableHtml += `<td>${key++}</td>`;
+        // tableHtml += `<td>${key++}</td>`;
         tableHtml += `<td>${location.locationname}</td>`;
-        tableHtml += '<td>';
-        tableHtml += `<button class="btn btn-primary btn-sm edit-btn Location-edit-btn" data-id="${location.locationid}" data-name="${location.locationname}"><i class="fa-solid fa-pencil fa-fw"></i></button>`;
+        tableHtml += '<td class="text-end">'; // Align buttons to the right
+        // Edit button with data attributes
+        tableHtml += `<button class="btn btn-primary btn-sm Location-edit-btn" data-id="${location.locationid}" data-name="${location.locationname}">
+        <i class="fa-solid fa-pencil fa-fw"></i></button>`;
+        // Add some space between the buttons
         tableHtml += '&nbsp;';
-        tableHtml += `<button class="btn btn-danger btn-sm delete-btn Location-delete-btn" data-id="${location.locationid}"><i class="fa-solid fa-trash fa-fw"></i></button>`;
+        // Delete button with data attributes
+        tableHtml += `<button class="btn btn-primary btn-sm Location-delete-btn" data-id="${location.locationid}">
+        <i class="fa-solid fa-trash fa-fw"></i></button>`;
         tableHtml += '</td>';
         tableHtml += '</tr>';
     });
     $('#locationTableBody').html(tableHtml);
 }
-
 
     // Function to fetch and generate location table
     function fetchAndGenerateLocationTable(searchText) {
@@ -1007,8 +1076,11 @@ $("#saveLocationBtn").click(function () {
 
 
 
- // Refresh button functionality
- $("#refreshBtn").click(function () {
+// Refresh button functionality
+$("#refreshBtn").click(function () {
+    // Clear the search input field
+    $("#searchInp").val("");
+    
     if ($("#personnelBtn").hasClass("active")) {
         // Refresh personnel table
         fetchAndGenerateTable(null, 'personnelTableBody');
@@ -1154,37 +1226,7 @@ $("#saveLocationBtn").click(function () {
     //     fetchAndGenerateLocationTable(null);
     // }
 
-   //Filter
-        $(document).on('click', '#filterBtn', function() {
-            var filterData = $('#searchType').val(); 
-            $.ajax({
-                url: 'php/filterAllData.php',  // Replace with your actual deletion script
-                type: 'POST',
-                data: { filterData: filterData },
-                success: function(response) {
-                    // // console.log(response);
-                    // Update the table with the search results
-                    switch (filterData) {
-                        case 'personnel':
-                            generatePersonnelSearchTable(response.data);
-                            break;
-                        case 'department':
-                            generateDepartmentSearchTable(response.data);
-                            break;
-                        case 'location':
-                            generateLocationSearchTable(response.data);
-                            break;
-                        default:
-                            // // console.error('Invalid search type:', searchType);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    // Handle error
-                    // // console.error("AJAX error:", error);
-                    alert("Failed to delete personnel. Please try again.");
-                }
-            });
-        });
+ 
         
 });
 
