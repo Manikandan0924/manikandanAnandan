@@ -1,7 +1,7 @@
 <?php
 
 // example use from browser
-// http://localhost/companydirectory/libs/php/insertDepartment.php?name=New%20Department&locationId=1
+// http://localhost/companydirectory/libs/php/insertDepartment.php?name=New%20Department&locationId=1&jobTitle=Manager
 
 // Remove next two lines for production
 ini_set('display_errors', 'On');
@@ -28,8 +28,9 @@ if (mysqli_connect_errno()) {
 
     exit;
 }
-$query = $conn->prepare('INSERT INTO personnel (firstName, lastName, email, departmentID) VALUES(?, ?, ?, ?)');
-$query->bind_param("sssi", $_POST['firstName'], $_POST['lastName'], $_POST['email'], $_POST['departmentID']);
+
+$query = $conn->prepare('INSERT INTO personnel (firstName, lastName, email, departmentID, jobTitle) VALUES(?, ?, ?, ?, ?)');
+$query->bind_param("sssis", $_POST['firstName'], $_POST['lastName'], $_POST['email'], $_POST['departmentID'], $_POST['jobTitle']);
 $query->execute();
 
 
@@ -37,15 +38,14 @@ if (false === $query) {
 
     $output['status']['code'] = "400";
     $output['status']['name'] = "executed";
-    $output['status']['description'] = "query failed";    
+    $output['status']['description'] = "query failed";
     $output['data'] = [];
 
     mysqli_close($conn);
 
-    echo json_encode($output); 
+    echo json_encode($output);
 
     exit;
-
 }
 
 $output['status']['code'] = "200";
@@ -56,6 +56,4 @@ $output['data'] = [];
 
 mysqli_close($conn);
 
-echo json_encode($output); 
-
-?>
+echo json_encode($output);

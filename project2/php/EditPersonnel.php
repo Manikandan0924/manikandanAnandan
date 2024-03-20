@@ -25,33 +25,42 @@ if (mysqli_connect_errno()) {
     exit;
 }
 
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // SQL statement is prepared to avoid SQL injection.
+    $query = $conn->prepare('UPDATE personnel SET firstName = ?, lastName = ?, email = ?, departmentID = ?, jobTitle = ? WHERE id = ?');
+    $query->bind_param("sssssi", $_POST['firstName'], $_POST['lastName'], $_POST['email'], $_POST['departmentID'], $_POST['jobTitle'], $_POST['id']);
+    $query->execute();
 
-// SQL statement is prepared to avoid SQL injection.
-$query = $conn->prepare('UPDATE personnel SET firstName = ?, lastName = ?, email = ?, departmentID = ? WHERE id = ?');
-$query->bind_param("ssssi", $_POST['firstName'], $_POST['lastName'], $_POST['email'], $_POST['departmentID'], $_POST['id']);
-$query->execute();
+    if ($query === false) {
+        $output['status']['code'] = "400";
+        $output['status']['name'] = "error";
+        $output['status']['description'] = "Query execution failed";    
+        $output['data'] = [];
 
-if ($query === false) {
-    $output['status']['code'] = "400";
-    $output['status']['name'] = "error";
-    $output['status']['description'] = "Query execution failed";    
+        mysqli_close($conn);
+
+        echo json_encode($output); 
+
+        exit;
+    }
+
+    $output['status']['code'] = "200";
+    $output['status']['name'] = "ok";
+    $output['status']['description'] = "Success";
+    $output['status']['returnedIn'] = (microtime(true) - $executionStartTime) . " sec";
     $output['data'] = [];
 
     mysqli_close($conn);
 
-    echo json_encode($output); 
+    echo json_encode($output);
+} else {
+    // If the request method is not POST, return an error response
+    $output['status']['code'] = "405";
+    $output['status']['name'] = "method_not_allowed";
+    $output['status']['description'] = "Method Not Allowed";
+    $output['data'] = [];
 
-    exit;
+    echo json_encode($output);
 }
-
-$output['status']['code'] = "200";
-$output['status']['name'] = "ok";
-$output['status']['description'] = "Success";
-$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) . " sec";
-$output['data'] = [];
-
-mysqli_close($conn);
-
-echo json_encode($output); 
 
 ?>

@@ -185,13 +185,17 @@ function generatePersonnelTable(data, tableBodyId) {
         tableHtml += `<td>${entry.location}</td>`; // Use location instead of locationName
 
         tableHtml += `<td>${entry.email}</td>`;
-        
+        tableHtml += `<td>${entry.jobTitle}</td>`
         tableHtml += '<td class="text-end">'; // Align buttons to the right
         // Edit button with data attributes
-        tableHtml += `<button class="btn btn-primary btn-sm Personnel-edit-btn"
-        data-id="${entry.id}" data-email="${entry.email}" data-firstName="${entry.firstName}" data-lastName="${entry.lastName}" data-department="${entry.department}" data-location="${entry.location}">
-        <i class="fa-solid fa-pencil fa-fw"></i></button>`;
+        // tableHtml += `<button class="btn btn-primary btn-sm Personnel-edit-btn"  data-bs-target="#editPersonnelModal"
+        // data-id="${entry.id}" data-email="${entry.email}" data-firstName="${entry.firstName}" data-lastName="${entry.lastName}" data-department="${entry.department}" data-location="${entry.location}">
+        // <i class="fa-solid fa-pencil fa-fw"></i></button>`;
         // Add some space between the buttons
+        tableHtml += `
+        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editPersonnelModal" data-id="${entry.id}">
+          <i class="fa-solid fa-pencil fa-fw"></i>
+        </button>`;
         tableHtml += '&nbsp;';
         // Delete button with data attributes
         tableHtml += `<button class="btn btn-primary btn-sm Personnel-delete-btn"
@@ -231,36 +235,6 @@ function generatePersonnelTable(data, tableBodyId) {
     // Initial table generation
     fetchAndGenerateTable(null, 'personnelTableBody');
 
-
-   // Event listener when the add personnel modal is shown
-$('#addpersonnelModal').on('shown.bs.modal', function (e) {
-    // Populate the department dropdown when the modal is shown
-    populatePersonnelDepartmentDropdown();
-});
-
-// Function to populate the department dropdown in the add personnel modal
-function populatePersonnelDepartmentDropdown() {
-    $.ajax({
-        url: "php/getDepartmentDetails.php",
-        type: "GET",
-        dataType: "json",
-        success: function(response) {
-            // Clear existing dropdown options
-            $('#addPersonnelDepartment').empty();
-            // Populate dropdown with fetched departments
-            $.each(response.data, function(index, department) {
-                $('#addPersonnelDepartment').append($('<option>', {
-                    value: department.id,
-                    text: department.name
-                }));
-            });
-        },
-        error: function(xhr, status, error) {
-            // // console.error("Error fetching departments:", error);
-            // Handle error if needed
-        }
-    });
-}
 
 
 
@@ -330,6 +304,37 @@ function populatePersonnelDepartmentDropdown() {
       
       
       
+   // Event listener when the add personnel modal is shown
+   $('#addpersonnelModal').on('shown.bs.modal', function (e) {
+    // Populate the department dropdown when the modal is shown
+    populatePersonnelDepartmentDropdown();
+});
+
+// Function to populate the department dropdown in the add personnel modal
+function populatePersonnelDepartmentDropdown() {
+    $.ajax({
+        url: "php/getDepartmentDetails.php",
+        type: "GET",
+        dataType: "json",
+        success: function(response) {
+            // Clear existing dropdown options
+            $('#addPersonnelDepartment').empty();
+            // Populate dropdown with fetched departments
+            $.each(response.data, function(index, department) {
+                $('#addPersonnelDepartment').append($('<option>', {
+                    value: department.id,
+                    text: department.name
+                }));
+            });
+        },
+        error: function(xhr, status, error) {
+            // // console.error("Error fetching departments:", error);
+            // Handle error if needed
+        }
+    });
+}
+
+
 
 
    // Function to handle the submission of the "Add Personnel" form
@@ -339,6 +344,8 @@ $("#addPersonnelForm").click(function () {
     var addPersonnelLastName = $("#addPersonnelLastName").val();
     var addPersonnelEmailAddress = $("#addPersonnelEmailAddress").val();
     var addPersonnelDepartment = $("#addPersonnelDepartment").val();
+    var addPersonnelJobTitle = $("#addPersonnelJobTitle").val();
+
 
     // AJAX request to send data to the server
     $.ajax({
@@ -349,7 +356,8 @@ $("#addPersonnelForm").click(function () {
             firstName: addPersonnelFirstName,
             lastName: addPersonnelLastName,
             email: addPersonnelEmailAddress,
-            departmentID: addPersonnelDepartment
+            departmentID: addPersonnelDepartment,
+            jobTitle: addPersonnelJobTitle
         },
         success: function (response) {
             // // console.log(response);
@@ -381,71 +389,72 @@ function refreshPersonnelTable() {
 
 
 
+ // Edit personnel modal event
+ $(document).ready(function() {
+    // Event listener for modal show event
+    $(document).on('show.bs.modal', '#editPersonnelModal', function(e) {
 
-// Event listener for edit button click
-$(document).on('click', '.Personnel-edit-btn', function() {
-    var Personnelid = $(this).data('id');
-    var PersonneltfirstName = $(this).data('firstname');
-    var PersonneltlastName = $(this).data('lastname');
-    var Personneltemail = $(this).data('email');
-    var PersonneldepartmentID = $(this).data('departmentid');
-
-    // Make AJAX call to fetch department details
     $.ajax({
-        url: "php/getDepartmentDetails.php",
-        type: "GET",
+        url: "php/getPersonnelByID.php",
+        type: "POST",
         dataType: "json",
-        success: function (response) {
-            var DepartmentData = response.data;
-            openEditPersonnelModal(Personnelid, PersonneltfirstName, PersonneltlastName, Personneltemail, PersonneldepartmentID, DepartmentData);
+        data: {
+            id: $(e.relatedTarget).attr("data-id")
         },
-        error: function (xhr, status, error) {
-            // // console.error(error);
+        success: function (result) {
+            var resultCode = result.status.code;
+
+            if (resultCode == 200) {
+                $("#editPersonnelEmployeeID").val(result.data.personnel[0].id);
+                $("#editPersonnelFirstName").val(result.data.personnel[0].firstName);
+                $("#editPersonnelLastName").val(result.data.personnel[0].lastName);
+                $("#editPersonnelJobTitle").val(result.data.personnel[0].jobTitle);
+                $("#editPersonnelEmailAddress").val(result.data.personnel[0].email);
+                $("#editPersonnelJobTitle").val(result.data.personnel[0].jobTitle);
+
+
+                $("#editPersonnelDepartment").html("");
+
+                $.each(result.data.department, function () {
+                    $("#editPersonnelDepartment").append(
+                        $("<option>", {
+                            value: this.id,
+                            text: this.name
+                        })
+                    );
+                });
+
+                $("#editPersonnelDepartment").val(result.data.personnel[0].departmentID);
+            } else {
+                $("#editPersonnelModal .modal-title").replaceWith("Error retrieving data");
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            $("#editPersonnelModal .modal-title").replaceWith("Error retrieving data");
         }
     });
 });
+});
+    
 
-function openEditPersonnelModal(personnelId, firstName, lastName, email, departmentId, departmentData) {
-    // console.log("Personnel ID:", personnelId);
-    // console.log("Department ID:", departmentId);
-    // console.log("Department Data:", departmentData);
 
-    $('#editPersonnelID').val(personnelId);
-    $('#editPersonnelFirstName').val(firstName);
-    $('#editPersonnelLastName').val(lastName);
-    $('#editPersonnelEmailAddress').val(email);
+$("#saveEditPersonnelForm").click(function () {    
+    $("#editPersonnelForm").submit();
+});
 
-    // Clear previous options
-    $('#editPersonnelDepartment').empty();
+$(document).on('submit', '#editPersonnelForm', function(event) {
+    // Prevent the default form submission
+    event.preventDefault();
 
-    // Populate department options
-    $.each(departmentData, function(index, department) {
-        var option = $('<option>', {
-            value: department.id,
-            text: department.name
-        });
-
-        // Set selected attribute if it matches the personnel's department ID
-        if (department.id === departmentId) {
-            console.log("Match found for department ID:", department.id);
-            option.attr('selected', 'selected');
-        }
-
-        $('#editPersonnelDepartment').append(option);
-    });
-
-    $('#editPersonnelModal').modal('show');
-}
-
-// Function to handle the submission of the "Edit Personnel" form
-$("#saveEditPersonnelForm").click(function () {
-    var editPersonnelId = $('#editPersonnelID').val();
+    // Retrieve form data
+    var editPersonnelId = $('#editPersonnelEmployeeID').val();
     var editPersonnelFirstName = $('#editPersonnelFirstName').val();
     var editPersonnelLastName = $('#editPersonnelLastName').val();
     var editPersonnelEmailAddress = $('#editPersonnelEmailAddress').val();
     var editPersonnelDepartment = $('#editPersonnelDepartment').val();
+    var editPersonnelJobTitle = $('#editPersonnelJobTitle').val();
 
-    // AJAX request to send data to the server for updating the personnel
+    // Perform AJAX request
     $.ajax({
         url: "php/EditPersonnel.php",
         type: "POST",
@@ -455,10 +464,10 @@ $("#saveEditPersonnelForm").click(function () {
             firstName: editPersonnelFirstName,
             lastName: editPersonnelLastName,
             email: editPersonnelEmailAddress,
-            departmentID: editPersonnelDepartment
+            departmentID: editPersonnelDepartment,
+            jobTitle: editPersonnelJobTitle
         },
         success: function (response) {
-            // // console.log(response);
             if (response.status.code === "200") {
                 // Close the modal after successful editing of personnel
                 $("#editPersonnelModal").modal("hide");
@@ -469,7 +478,6 @@ $("#saveEditPersonnelForm").click(function () {
             }
         },
         error: function (xhr, status, error) {
-            // // console.error("AJAX error:", error);
             alert("AJAX error: " + error);
         }
     });
@@ -556,8 +564,12 @@ function generateDepartmentTable(data) {
         tableHtml += `<td>${department.locationName}</td>`; // Display department location
         tableHtml += '<td class="text-end">'; // Align buttons to the right
         // Edit button with data attributes
-        tableHtml += `<button class="btn btn-primary btn-sm Department-edit-btn" data-id="${department.id}" data-name="${department.name}" data-locationName="${department.locationName}">
-        <i class="fa-solid fa-pencil fa-fw"></i></button>`;
+        // tableHtml += `<button class="btn btn-primary btn-sm Department-edit-btn" data-id="${department.id}" data-name="${department.name}" data-locationName="${department.locationName}">
+        // <i class="fa-solid fa-pencil fa-fw"></i></button>`;
+        tableHtml += `
+        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editDepartmentModal" data-id="${department.id}" data-name="${department.name}" data-locationName="${department.locationName}">
+          <i class="fa-solid fa-pencil fa-fw"></i>
+        </button>`;
         // Add some space between the buttons
         tableHtml += '&nbsp;';
         // Delete button with data attributes
@@ -628,71 +640,71 @@ $('#addDepartmentModal').on('shown.bs.modal', function (e) {
     populateDepartmentLocationDropdown();
 });
 
-// Event listener for edit button click
-$(document).on('click', '.Department-edit-btn', function() {
-    var departmentId = $(this).data('id');
-    var departmentName = $(this).data('name'); // Using data-name attribute
-    var departmentlocationname = $(this).data('departmentlocationname'); // Using data-locationid attribute
-    // alert(departmentlocationname);
-    // Make AJAX call to fetch location details
+
+
+// Edit Department modal event
+$(document).ready(function() {
+    // Event listener for modal show event
+    $(document).on('show.bs.modal', '#editDepartmentModal', function(e) {
+            // alert($(e.relatedTarget).attr("data-id"));
     $.ajax({
-        url: "php/getLocationDetails.php",
-        type: "GET",
+        url: "php/getDepartmentByID.php",
+        type: "POST",
         dataType: "json",
-    
-        success: function (response) {
-            // Handle the response data here
-            var locationName = response.data;
-            // Open edit department modal and pass department and location details
-            openEditDepartmentModal(departmentId, departmentName, locationName,departmentlocationname);
+        data: {
+            id: $(e.relatedTarget).attr("data-id")
         },
-        error: function (xhr, status, error) {
-            // Handle errors here
-            // // console.error(error);
+        success: function (result) {
+            var resultCode = result.status.code;
+            // console.log(result);
+
+            if (resultCode == 200) {
+                $("#editDepartmentId").val(result.data.Department[0].id);
+                $("#editDepartmentName").val(result.data.Department[0].name);
+                $("#editDepartmentLocationDropdown").html("");
+
+                $.each(result.data.location, function () {
+                    $("#editDepartmentLocationDropdown").append(
+                        $("<option>", {
+                            value: this.id,
+                            text: this.name
+                        })
+                    );
+                });
+
+                $("#editDepartmentLocationDropdown").val(result.data.Department[0].locationID);
+            } else {
+                $("#editDepartmentModal .modal-title").replaceWith("Error retrieving data");
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            $("#editDepartmentModal .modal-title").replaceWith("Error retrieving data");
         }
     });
 });
-
-function openEditDepartmentModal(departmentId, departmentName, locationData, departmentLocationName) {
-    $('#editDepartmentId').val(departmentId);
-    $('#editDepartmentName').val(departmentName);
-
-    // Clear previous options
-    $('#editDepartmentLocationDropdown').empty();
-
-    // Populate dropdown with fetched locations
-    $.each(locationData, function(index, location) {
-        var option = $('<option>', {
-            value: location.locationid,
-            text: location.locationname
-        });
-        
-        // Check if current location matches departmentLocationName and set selected attribute
-        if (location.locationname === departmentLocationName) {
-            option.attr('selected', 'selected');
-        }
-        
-        $('#editDepartmentLocationDropdown').append(option);
-    });
-
-    $('#editDepartmentModal').modal('show');
-}
+});
 
 
-// Function to handle the submission of the "Edit Department" form
-$("#saveEditDepartmentBtn").click(function () {
-    // Get the edited department ID, name, and location ID from the input fields
+$("#saveEditDepartmentForm").click(function () {    
+    $("#editDepartmentForm").submit();
+});
+
+$(document).on('submit', '#editDepartmentForm', function(event) {
+    // Prevent the default form submission
+    event.preventDefault();
+
+    // Retrieve form data
     var departmentId = $("#editDepartmentId").val().trim();
     var departmentName = $("#editDepartmentName").val().trim();
     var departmentLocationId = $("#editDepartmentLocationDropdown").val();
 
-    // Validate if department name is not empty
-    if (departmentName === "") {
+      // Validate if department name is not empty
+      if (departmentName === "") {
         alert("Please enter a department name.");
         return;
     }
 
-    // AJAX request to send data to the server for updating the department
+    // Perform AJAX request
     $.ajax({
         url: "php/editDepartment.php", // Replace with the actual URL of your server-side script for editing department
         type: "POST", // Use POST method to send data
@@ -703,26 +715,22 @@ $("#saveEditDepartmentBtn").click(function () {
             locationId: departmentLocationId // Send the edited department location ID to the server
         },
         success: function (response) {
-            // // console.log(response);
-            // Check if the server successfully processed the request
             if (response.status.code === "200") {
-                // Close the modal after successful editing of department
                 $("#editDepartmentModal").modal("hide");
-                // Optionally, you can refresh the department table to reflect the changes
-                fetchAndGenerateDepartmentTable(null); // Assuming you have a function to fetch and generate department table
+                fetchAndGenerateDepartmentTable($("#searchInp").val().trim(), 'departmentTableBody');
+
             } else {
-                // Display error message if server-side operation failed
                 alert("Failed to update department. Please try again.");
             }
         },
         error: function (xhr, status, error) {
-            // Handle AJAX errors
-            // // console.error("AJAX error:", error);
-            // Display error message to the user
             alert("AJAX error: " + error);
         }
     });
 });
+
+
+
 
 // Event listener for delete button click
 $(document).on('click', '.Department-delete-btn', function() {
@@ -846,8 +854,14 @@ function generateLocationTable(data) {
         tableHtml += `<td>${location.locationname}</td>`;
         tableHtml += '<td class="text-end">'; // Align buttons to the right
         // Edit button with data attributes
-        tableHtml += `<button class="btn btn-primary btn-sm Location-edit-btn" data-id="${location.locationid}" data-name="${location.locationname}">
-        <i class="fa-solid fa-pencil fa-fw"></i></button>`;
+        // tableHtml += `<button class="btn btn-primary btn-sm Location-edit-btn" data-id="${location.locationid}" data-name="${location.locationname}">
+        // <i class="fa-solid fa-pencil fa-fw"></i></button>`;
+
+
+        tableHtml += `
+        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editLocationModal" data-id="${location.locationid}" data-name="${location.locationname}">
+          <i class="fa-solid fa-pencil fa-fw"></i>
+        </button>`;
         // Add some space between the buttons
         tableHtml += '&nbsp;';
         // Delete button with data attributes
@@ -886,25 +900,51 @@ function generateLocationTable(data) {
 
    
 
-
-// Function to open edit modal
-function openEditModal(locationId, locationName) {
-    $('#editLocationId').val(locationId);
-    $('#editLocationName').val(locationName);
-    $('#editLocationModal').modal('show');
-}
-
-// Function to open edit modal
-$(document).on('click', '.Location-edit-btn', function() {
-    var locationId = $(this).data('id');
-    var locationName = $(this).data('name');
-    openEditModal(locationId, locationName);
+// Edit Location modal event
+$(document).ready(function() {
+    // Event listener for modal show event
+    $(document).on('show.bs.modal', '#editLocationModal', function(e) {
+        // alert($(e.relatedTarget).attr("data-id"));
+       
+        var locationId = $(e.relatedTarget).attr("data-id");
+        var locationName = $(e.relatedTarget).attr("data-name");
+        $('#editLocationId').val(locationId);
+        $('#editLocationName').val(locationName);
+    //     $.ajax({
+    //         url: "php/editLocation.php",
+    //         type: "POST",
+    //         dataType: "json",
+    //         data: {
+    //             id: $(e.relatedTarget).attr("data-id")
+    //         },
+    //         success: function(result) {
+    //             console.log(result);
+    //             var resultCode = result.status.code;
+    //             if (resultCode == 200) {
+    //                 $("#editLocationId").val(result.data.Location[0].id);
+    //                 $("#editLocationName").val(result.data.Location[0].name);
+    //             } else {
+    //                 $("#editLocationModal .modal-title").replaceWith("Error retrieving data");
+    //             }
+    //         },
+    //         error: function(jqXHR, textStatus, errorThrown) {
+    //             $("#editLocationModal .modal-title").replaceWith("Error retrieving data");
+    //         }
+    //     });
+    });
 });
 
+// Event handler for submitting the "Edit Location" form
+$("#saveEditLocationForm").click(function () {    
+    $("#editLocationForm").submit();
+});
 
-// Function to handle the submission of the "Edit Location" form
-$("#saveChangesBtn").click(function () {
-    // Get the edited location ID and name from the input fields
+// Event handler for submitting the "Edit Location" form
+$(document).on('submit', '#editLocationForm', function(event) {
+    // Prevent the default form submission
+    event.preventDefault();
+
+    // Retrieve form data
     var locationId = $("#editLocationId").val().trim();
     var locationName = $("#editLocationName").val().trim();
     
@@ -914,9 +954,9 @@ $("#saveChangesBtn").click(function () {
         return;
     }
 
-    // AJAX request to send data to the server for updating the location
+    // Perform AJAX request to update the location
     $.ajax({
-        url: "php/editLocation.php", // Replace with the actual URL of your server-side script for updating location
+        url: "php/editLocation.php", // Replace with the actual URL of your server-side script for editing locations
         type: "POST", // Use POST method to send data
         dataType: "json", // Expect JSON response from the server
         data: {
@@ -924,14 +964,12 @@ $("#saveChangesBtn").click(function () {
             name: locationName // Send the edited location name to the server
         },
         success: function (response) {
-            // // console.log(response);
             // Check if the server successfully processed the request
             if (response.status.code === "200") {
-                // Close the modal after successful editing of location
+                // Close the edit location modal after successful update
                 $("#editLocationModal").modal("hide");
-
                 // Optionally, you can refresh the location table to reflect the changes
-                fetchAndGenerateLocationTable(null); // Assuming you have a function to fetch and generate location table
+                fetchAndGenerateLocationTable(); // Assuming you have a function to fetch and generate location table
             } else {
                 // Display error message if server-side operation failed
                 alert("Failed to update location. Please try again.");
@@ -939,8 +977,6 @@ $("#saveChangesBtn").click(function () {
         },
         error: function (xhr, status, error) {
             // Handle AJAX errors
-            // // console.error("AJAX error:", error);
-            // Display error message to the user
             alert("AJAX error: " + error);
         }
     });
@@ -1129,106 +1165,10 @@ $("#refreshBtn").click(function () {
         $("#searchType").val('location'); 
     });
 
-    // Edit personnel modal event
-    $("#editPersonnelModal").on("show.bs.modal", function (e) {
-        $.ajax({
-            url: "https://coding.itcareerswitch.co.uk/companydirectory/libs/php/getPersonnelByID.php",
-            type: "POST",
-            dataType: "json",
-            data: {
-                id: $(e.relatedTarget).attr("data-id")
-            },
-            success: function (result) {
-                var resultCode = result.status.code;
-
-                if (resultCode == 200) {
-                    $("#editPersonnelEmployeeID").val(result.data.personnel[0].id);
-                    $("#editPersonnelFirstName").val(result.data.personnel[0].firstName);
-                    $("#editPersonnelLastName").val(result.data.personnel[0].lastName);
-                    $("#editPersonnelJobTitle").val(result.data.personnel[0].jobTitle);
-                    $("#editPersonnelEmailAddress").val(result.data.personnel[0].email);
-
-                    $("#editPersonnelDepartment").html("");
-
-                    $.each(result.data.department, function () {
-                        $("#editPersonnelDepartment").append(
-                            $("<option>", {
-                                value: this.id,
-                                text: this.name
-                            })
-                        );
-                    });
-
-                    $("#editPersonnelDepartment").val(result.data.personnel[0].departmentID);
-                } else {
-                    $("#editPersonnelModal .modal-title").replaceWith("Error retrieving data");
-                }
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                $("#editPersonnelModal .modal-title").replaceWith("Error retrieving data");
-            }
-        });
-    });
-
-    // Edit personnel form submission
-    $("#editPersonnelForm").on("submit", function (e) {
-        e.preventDefault(); // Prevent default form submission
-
-        // Serialize form data
-        var formData = $(this).serialize();
-
-        // Send AJAX request to update personnel information
-        $.ajax({
-            url: "php/updatePersonnel.php", // Update the URL with your server-side script for updating personnel
-            type: "POST",
-            data: formData,
-            dataType: "json",
-            success: function (response) {
-                // Handle successful response
-                if (response.success) {
-                    // Personnel information updated successfully
-                    // Close the modal
-                    $("#editPersonnelModal").modal("hide");
-
-                    // Display success message to the user
-                    $("#editPersonnelForm").after('<div class="alert alert-success mt-3" role="alert">Personnel information updated successfully.</div>');
-
-                    // Optionally, you can refresh the personnel table to reflect the changes
-                    fetchAndGenerateTable(null, 'personnelTableBody');
-                } else {
-                    // Handle errors or display a message to the user
-                    // // console.error("Error updating personnel information:", response.message);
-                    // Display error message to the user
-                    $("#editPersonnelForm").after('<div class="alert alert-danger mt-3" role="alert">Error updating personnel information: ' + response.message + '</div>');
-                }
-            },
-            error: function (xhr, status, error) {
-                // Handle AJAX errors
-                // // console.error("AJAX error:", error);
-                // Display error message to the user
-                $("#editPersonnelForm").after('<div class="alert alert-danger mt-3" role="alert">AJAX error: ' + error + '</div>');
-            }
-        });
-    });
-
-    // // Function to refresh the personnel table
-    // function refreshPersonnelTable() {
-    //     fetchAndGenerateTable(null, 'personnelTableBody');
-    // }
-
-    // // Function to refresh the department table
-    // function refreshDepartmentTable() {
-    //     fetchAndGenerateDepartmentTable(null);
-    // }
-
-    // // Function to refresh the location table
-    // function refreshLocationTable() {
-    //     fetchAndGenerateLocationTable(null);
-    // }
-
- 
-        
+   
 });
+
+
 
 
 // Function to handle close button click event

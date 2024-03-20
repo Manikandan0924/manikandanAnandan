@@ -80,13 +80,13 @@
 
           <div id="editPersonnelModal" class="modal fade" tabindex="-1" data-bs-backdrop="false" data-bs-keyboard="false" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable">
-              <div class="modal-content shadow"> 
+              <div class="modal-content shadow">
                 <div class="modal-header bg-primary bg-gradient text-white">
                   <h5 class="modal-title">Edit employee</h5>
                   <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                  <!-- <form id="editPersonnelForm"> -->
+                  <form id="editPersonnelForm">
                     <input type="hidden" id="editPersonnelEmployeeID">
                     <div class="form-floating mb-3">
                       <input type="text" class="form-control" id="editPersonnelFirstName" placeholder="First name" required>
@@ -110,7 +110,7 @@
                       <label for="editPersonnelDepartment">Department</label>
                     </div>  
                     <input type="hidden" id="editPersonnelID">
-                  <!-- </form> -->
+                  </form>
                 </div>
                 <div class="modal-footer">
                   <button type="submit" id="saveEditPersonnelForm" class="btn btn-outline-primary btn-sm myBtn">SAVE</button>
@@ -119,47 +119,7 @@
               </div>
             </div>
           </div>
-    
 
-<!-- Edit Personnel Modal
-<div class="modal fade" id="editPersonnelModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable">
-      <div class="modal-content shadow">
-          <div class="modal-header bg-primary bg-gradient text-white">
-              <h5 class="modal-title">Edit employee</h5>
-              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-              <input type="hidden" id="editPersonnelEmployeeID">
-              <div class="form-floating mb-3">
-                  <input type="text" class="form-control" id="editPersonnelFirstName" placeholder="First name" required>
-                  <label for="editPersonnelFirstName">First name</label>
-              </div>
-              <div class="form-floating mb-3">
-                  <input type="text" class="form-control" id="editPersonnelLastName" placeholder="Last name" required>
-                  <label for="editPersonnelLastName">Last name</label>
-              </div>
-              <div class="form-floating mb-3">
-                  <input type="text" class="form-control" id="editPersonnelJobTitle" placeholder="Job title" required>
-                  <label for="editPersonnelJobTitle">Job Title</label>
-              </div>
-              <div class="form-floating mb-3">
-                  <input type="email" class="form-control" id="editPersonnelEmailAddress" placeholder="Email address" required>
-                  <label for="editPersonnelEmailAddress">Email Address</label>
-              </div>
-              <div class="form-floating">
-                  <select class="form-select" id="editPersonnelDepartment" placeholder="Department">
-                  </select>
-                  <label for="editPersonnelDepartment">Department</label>
-              </div>
-          </div>
-          <div class="modal-footer">
-              <button type="submit" id="saveEditPersonnelForm" class="btn btn-outline-primary btn-sm myBtn">SAVE</button>
-              <button type="button" class="btn btn-outline-primary btn-sm myBtn" data-bs-dismiss="modal">CANCEL</button>
-          </div>
-      </div>
-  </div>
-</div> -->
           
     <!-- Delete Personnel Modal -->
     <div class="modal fade" id="deletePersonnelModal" tabindex="-1" role="dialog" aria-labelledby="deletePersonnelModalLabel" aria-hidden="true">
@@ -243,35 +203,36 @@
                 </div>
             </section>
 
-<!-- Edit Department Modal -->
-<div class="modal fade" id="editDepartmentModal" tabindex="-1" role="dialog" aria-labelledby="editDepartmentModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-      <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title" id="editDepartmentModalLabel">Edit Department</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-              <input type="hidden" id="editDepartmentId">
-              <div class="form-group">
-                  <label for="editDepartmentName">Department Name:</label>
-                  <input type="text" class="form-control" id="editDepartmentName">
+            <div class="modal fade" id="editDepartmentModal" tabindex="-1" role="dialog" aria-labelledby="editDepartmentModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content shadow">
+                  <div class="modal-header bg-primary bg-gradient text-white">
+                    <h5 class="modal-title">Edit Department</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form id="editDepartmentForm">
+                      <input type="hidden" id="editDepartmentId">
+                      <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="editDepartmentName" placeholder="Department Name" required>
+                        <label for="editDepartmentName">Department Name</label>
+                      </div>
+                      <div class="form-floating">
+                        <select class="form-select" id="editDepartmentLocationDropdown" placeholder="Department Location">
+                          <!-- Dropdown options will be dynamically added here -->
+                        </select>
+                        <label for="editDepartmentLocationDropdown">Department Location</label>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="submit" id="saveEditDepartmentForm" class="btn btn-outline-primary btn-sm myBtn">SAVE</button>
+                    <button type="button" class="btn btn-outline-primary btn-sm myBtn" data-bs-dismiss="modal">CANCEL</button>
+                  </div>
+                </div>
               </div>
-              <div class="form-group">
-                  <label for="editDepartmentLocationDropdown">Department Location:</label>
-                  <select class="form-control" id="editDepartmentLocationDropdown">
-                      <!-- Dropdown options will be dynamically added here -->
-                  </select>
-              </div>
-          </div>
-          <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary" id="saveEditDepartmentBtn">Save Changes</button>
-          </div>
-      </div>
-  </div>
-</div>
-
+            </div>
+            
             <!-- Delete Department Modal -->
             <div class="modal fade" id="deleteDepartmentModal" tabindex="-1" role="dialog" aria-labelledby="deleteDepartmentModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
@@ -313,31 +274,31 @@
           </section>
       </div>
       
-      <!-- Edit Location Modal -->
+   <!-- Edit Location Modal -->
 <div class="modal fade" id="editLocationModal" tabindex="-1" role="dialog" aria-labelledby="editLocationModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="editLocationModalLabel">Edit Location</h5>
-        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+  <div class="modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content shadow">
+      <div class="modal-header bg-primary bg-gradient text-white">
+        <h5 class="modal-title">Edit Location</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <input type="hidden" id="editLocationId">
-        <div class="form-group">
-          <label for="editLocationName">Location Name:</label>
-          <input type="text" class="form-control" id="editLocationName">
-        </div>
+        <form id="editLocationForm">
+          <input type="hidden" id="editLocationId">
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="editLocationName" placeholder="Location Name" required>
+            <label for="editLocationName">Location Name</label>
+          </div>
+        </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="saveChangesBtn">Save Changes</button>
-
+        <button type="submit" id="saveEditLocationForm" class="btn btn-outline-primary btn-sm myBtn">SAVE</button>
+        <button type="button" class="btn btn-outline-primary btn-sm myBtn" data-bs-dismiss="modal">CANCEL</button>
       </div>
     </div>
   </div>
 </div>
+
 
 <!-- Delete Location Modal -->
 <div class="modal fade" id="deleteLocationModal" tabindex="-1" role="dialog" aria-labelledby="deleteLocationModalLabel" aria-hidden="true">
@@ -407,6 +368,8 @@
       </div>
   </div>
 </div>
+
+
 
 
 
