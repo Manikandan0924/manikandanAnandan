@@ -1,4 +1,100 @@
+
 $(document).ready(function () {
+
+    $.ajax({
+        url: "php/getDepartmentDetails.php",
+        type: "GET",
+        dataType: "json",
+        success: function(response) {
+            // Clear existing dropdown options
+            $('#filterPersonnelByDepartment').empty();
+            $('#filterPersonnelByDepartment').append($('<option>', {
+                value: '',
+                text: 'Select Department'
+            }));
+            // Populate dropdown with fetched departments
+            $.each(response.data, function(index, department) {
+
+                $('#filterPersonnelByDepartment').append($('<option>', {
+                    value: department.id,
+                    text: department.name
+                }));
+            });
+        },
+        error: function(xhr, status, error) {
+            // // console.error("Error fetching departments:", error);
+            // Handle error if needed
+        }
+    });
+
+    $.ajax({
+        url: "php/getLocationDetails.php",
+        type: "GET",
+        dataType: "json",
+        success: function(response) {
+            $('#filterPersonnelByLocation').empty();
+            $('#filterPersonnelByLocation').append($('<option>', {
+                value: '',
+                text: 'Select Location'
+            }));
+            $.each(response.data, function(index, location) {
+                $('#filterPersonnelByLocation').append($('<option>', {
+                    value: location.locationid,
+                    text: location.locationname
+                }));
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error("Error fetching locations:", error);
+        }
+    });
+
+
+    $('#filterPersonnelByDepartment').change(function () {
+
+        $.ajax({
+            url: "php/filterPersonnelByDepartment.php",
+            type: "POST",
+            dataType: "json",
+            data: {
+                departmentID: $('#filterPersonnelByDepartment').val(),
+            },
+            success: function (response) {
+                // Handle the response data here
+                console.log('response'+response.data);
+                generatePersonnelTable(response.data, 'personnelTableBody');
+            },
+            error: function (xhr, status, error) {
+                // Handle errors here
+                console.error(error);
+            }
+        });
+
+    });
+
+
+    $('#filterPersonnelByLocation').change(function () {
+
+        $.ajax({
+            url: "php/filterPersonnelByLocation.php",
+            type: "POST",
+            dataType: "json",
+            data: {
+                LocationID: $('#filterPersonnelByLocation').val(),
+            },
+            success: function (response) {
+                // Handle the response data here
+                console.log('response'+response.data);
+                generatePersonnelTable(response.data, 'personnelTableBody');
+            },
+            error: function (xhr, status, error) {
+                // Handle errors here
+                console.error(error);
+            }
+        });
+
+    });
+
 
     $('#searchType').val('personnel');
 
@@ -168,6 +264,7 @@ $(document).ready(function () {
 
    // Function to generate personnel table
 function generatePersonnelTable(data, tableBodyId) {
+    // console.log(data);
     let tableHtml = '';
     // let key = 1; // Initialize a variable to keep track of the incrementing value
 
@@ -230,68 +327,18 @@ $('#filterBtn').click(function () {
     $('#filterPersonnelModal').modal('show');
 });
 
-// Event listener for apply filter button click
-$("#applyFilterBtn").click(function () {
-    var selectedDepartment = $('#filterPersonnelByDepartment').val();
-    var selectedLocation = $('#filterPersonnelByLocation').val();
 
-    // Apply the filter based on selectedDepartment or selectedLocation
-    if (selectedDepartment > 0) {
-        applyFilter(selectedDepartment, null); // Pass department ID and null for location
-    } else if (selectedLocation > 0) {
-        applyFilter(null, selectedLocation); // Pass null for department and location ID
-    } else {
-        // No filter selected, display all personnel
-        fetchAndGenerateTable(null, 'personnelTableBody');
-    }
-
-    // Close the filter modal
-    $('#filterPersonnelModal').modal('hide');
-});
-
-// Event listener for department filter change
-$("#filterPersonnelByDepartment").change(function () {
-    if (this.value > 0) {
-        $("#filterPersonnelByLocation").val(0);
-        // Apply department filter
-        applyFilter(this.value, null); // Pass department ID and null for location
-    }
-});
-
-// Event listener for location filter change
-$("#filterPersonnelByLocation").change(function () {
-    if (this.value > 0) {
-        $("#filterPersonnelByDepartment").val(0);
-        // Apply location filter
-        applyFilter(null, this.value); // Pass null for department and location ID
-    }
-});
-
-// Function to apply filter based on department or location
-function applyFilter(departmentId, locationId) {
-    // Call function to fetch and generate filtered table based on department or location
-    $.ajax({
-        url: "php/getFilteredPersonnel.php",
-        type: "GET",
-        dataType: "json",
-        data: {
-            departmentId: departmentId,
-            locationId: locationId
-        },
-        success: function (response) {
-            // Handle the response data here
-            generatePersonnelTable(response.data, 'personnelTableBody');
-        },
-        error: function (xhr, status, error) {
-            // Handle errors here
-            console.error(error);
-        }
-    });
-}
 
     
     // Event listener when the add personnel modal is shown
-    $('#addpersonnelModal').on('shown.bs.modal', function (e) {
+    $('#addpersonnelModal').on('show.bs.modal', function (e) {
+        // event.preventDefault();
+        // Get the personnel details from the input fields
+        $("#addPersonnelFirstName").val('');
+        $("#addPersonnelLastName").val('');
+        $("#addPersonnelEmailAddress").val('');
+        $("#addPersonnelDepartment").val('');
+        $("#addPersonnelJobTitle").val('');
         // Populate the department dropdown when the modal is shown
         populatePersonnelDepartmentDropdown();
     });
@@ -321,7 +368,10 @@ function applyFilter(departmentId, locationId) {
     }
 
     // Function to handle the submission of the "Add Personnel" form
-    $("#addPersonnelForm").click(function () {
+    // $("#addPersonnelForm").click(function () {
+        $("#addPersonnelForm").on("submit", function (event) {
+
+            event.preventDefault();
         // Get the personnel details from the input fields
         var addPersonnelFirstName = $("#addPersonnelFirstName").val();
         var addPersonnelLastName = $("#addPersonnelLastName").val();
@@ -373,9 +423,11 @@ function applyFilter(departmentId, locationId) {
 
 
      // Edit personnel modal event
-    $(document).ready(function() {
+    // $(document).ready(function() {
         // Event listener for modal show event
-        $(document).on('show.bs.modal', '#editPersonnelModal', function(e) {
+        // $(document).on('show.bs.modal', '#editPersonnelModal', function(e) {
+            $("#editPersonnelModal").on("show.bs.modal", function (e) {
+
 
         $.ajax({
             url: "php/getPersonnelByID.php",
@@ -417,14 +469,15 @@ function applyFilter(departmentId, locationId) {
             }
         });
     });
-    });
+    // });
 
-    $("#saveEditPersonnelForm").click(function () {    
-        $("#editPersonnelForm").submit();
-    });
+    // $("#saveEditPersonnelForm").click(function () {    
+    //     $("#editPersonnelForm").submit();
+    // });
 
-    $(document).on('submit', '#editPersonnelForm', function(event) {
         // Prevent the default form submission
+$("#editPersonnelForm").on("submit", function (event) {
+
         event.preventDefault();
 
         // Retrieve form data
@@ -469,13 +522,14 @@ function applyFilter(departmentId, locationId) {
         // Get data attributes from the button
         var personnelId = $(this).data('id');
         var personnelName = $(this).data('name');
-        
-        // Set data attributes in the modal for further processing
+      
+
         $('#deletePersonnelModal').data('personnelId', personnelId);
-        $('#deletePersonnelModal').data('personnelName', personnelName); // Add personnelName attribute
+        $('#name').html(personnelName); // Add personnelName attribute
         
         // Show the delete modal
         $('#deletePersonnelModal').modal('show');
+       
     });
 
     // Event listener for confirm delete button click
@@ -580,6 +634,20 @@ function fetchAndGenerateDepartmentTable(searchText) {
 // Initial table generation
 fetchAndGenerateDepartmentTable(null);
 
+
+// Event listener to detect when the department modal is shown
+$('#addDepartmentModal').on('show.bs.modal', function (e) {
+    // event.preventDefault();
+
+
+      // Clear any previous input field
+      $('#addDepartmentName').val('');
+      $('#addDepartmentLocation').val('');
+
+    populateDepartmentLocationDropdown();
+    
+});
+
 // Function to populate the department location dropdown in the department modal
 function populateDepartmentLocationDropdown() {
     $.ajax({
@@ -587,9 +655,9 @@ function populateDepartmentLocationDropdown() {
         type: "GET",
         dataType: "json",
         success: function(response) {
-            $('#departmentLocationDropdown').empty();
+            $('#addDepartmentLocation').empty(); // Assuming addDepartmentLocation is the ID of your dropdown
             $.each(response.data, function(index, location) {
-                $('#departmentLocationDropdown').append($('<option>', {
+                $('#addDepartmentLocation').append($('<option>', {
                     value: location.locationid,
                     text: location.locationname
                 }));
@@ -601,14 +669,56 @@ function populateDepartmentLocationDropdown() {
     });
 }
 
-// Event listener to detect when the department modal is shown
-$('#addDepartmentModal').on('shown.bs.modal', function (e) {
-    populateDepartmentLocationDropdown();
+
+
+// Function to handle the submission of the "Add Department" form
+$("#addDepartmentForm").submit(function(event) {
+        // Prevent the default form submission behavior
+        event.preventDefault();
+    
+    // Get the department details from the input fields
+    var addDepartmentName = $("#addDepartmentName").val();
+    var addDepartmentLocation = $("#addDepartmentLocation").val();
+
+    // AJAX request to send data to the server
+    $.ajax({
+        url: "php/createDepartment.php",
+        type: "POST",
+        dataType: "json",
+        data: {
+            name: addDepartmentName,
+            locationID: addDepartmentLocation
+        },
+        success: function (response) {
+            // Check if the server successfully processed the request
+            if (response.status.code === "200") {
+                // Close the modal after successful addition of department
+                $("#addDepartmentModal").modal("hide");
+                // Refresh the table to reflect the changes
+                refreshDepartmentTable();
+            } else {
+                // Display error message if server-side operation failed
+                alert("Failed to add department. Please try again.");
+            }
+        },
+        error: function (xhr, status, error) {
+            // Handle AJAX errors
+            alert("AJAX error: " + error);
+        }
+    });
 });
 
+ // Function to refresh the personnel table
+ function refreshDepartmentTable() {
+    var searchText = $("#searchInp").val().trim();
+    fetchAndGenerateDepartmentTable(searchText, 'departmentTableBody');
+}
+
 // Edit Department modal event
-$(document).ready(function() {
-    $(document).on('show.bs.modal', '#editDepartmentModal', function(e) {
+// $(document).ready(function() {
+    // $(document).on('show.bs.modal', '#editDepartmentModal', function(e) {
+        $("#editDepartmentModal").on("show.bs.modal", function (e) {
+
         $.ajax({
             url: "php/getDepartmentByID.php",
             type: "POST",
@@ -640,13 +750,13 @@ $(document).ready(function() {
             }
         });
     });
-});
+// });
 
-$("#saveEditDepartmentForm").click(function () {    
-    $("#editDepartmentForm").submit();
-});
+// $("#saveEditDepartmentForm").click(function () {    
+//     $("#editDepartmentForm").submit();
+// });
 
-$(document).on('submit', '#editDepartmentForm', function(event) {
+$("#editDepartmentForm").on("submit", function (event) {
     event.preventDefault();
 
     var departmentId = $("#editDepartmentId").val().trim();
@@ -686,20 +796,52 @@ $(document).on('click', '.Department-delete-btn', function() {
     var departmentName = $(this).data('name');
     var locationName = $(this).data('locationname');
     
-    $('#deleteDepartmentModal').modal('show');
+
+    $.ajax({
+        url:"php/checkDepartmentUse.php",
+        // SELECT d.name AS departmentName, COUNT(p.id) as personnelCount FROM department d LEFT JOIN personnel p ON (p.departmentID = d.id) WHERE d.id  = ?
+        type: "POST",
+        dataType: "json",
+        data: {
+          id: departmentId // Retrieves the data-id attribute from the calling button
+        },
+        success: function (result) {
+            console.log(result);
+          if (result.status.code == 200) {
+            if (result.data[0].personnelCount == 0) {
+              $("#areYouSureDeptName").text(result.data[0].departmentName);
     
-    $('#deleteDepartmentModal').data('departmentId', departmentId);
-    $('#deleteDepartmentModal').data('departmentName', departmentName);
-    $('#deleteDepartmentModal').data('locationName', locationName);
+              $("#areYouSureDeleteDepartmentModal").modal("show");
+    // $('#deleteDepartmentModal').modal('show');
+
+            } else {
+              $("#cantDeleteDeptName").text(result.data[0].departmentName);
+              $("#personnelCount").text(result.data[0].personnelCount);
+    
+              $("#cantDeleteDepartmentModal").modal("show");
+            }
+          } else {
+            $("#exampleModal .modal-title").replaceWith("Error retrieving data");
+          }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          $("#exampleModal .modal-title").replaceWith("Error retrieving data");
+        }
+      });
+
+    
+    $('#areYouSureDeleteDepartmentModal').data('departmentId', departmentId);
+    $('#areYouSureDeleteDepartmentModal').data('departmentName', departmentName);
+    $('#areYouSureDeleteDepartmentModal').data('locationName', locationName);
 });
 
 $('#confirmDeleteDepartmentBtn').on('click', function() {
-    var departmentId = $('#deleteDepartmentModal').data('departmentId');
+    var departmentId = $('#areYouSureDeleteDepartmentModal').data('departmentId');
     deleteDepartment(departmentId);
 });
 
 $('#cancelDeleteDepartmentBtn').on('click', function() {
-    $('#deleteDepartmentModal').modal('hide');
+    $('#areYouSureDeleteDepartmentModal').modal('hide');
 });
 
 function deleteDepartment(departmentId) {
@@ -723,37 +865,6 @@ function deleteDepartment(departmentId) {
         }
     });
 }
-
-$("#saveDepartmentBtn").click(function () {
-    var departmentName = $("#departmentName").val().trim();
-    var departmentLocationDropdown = $("#departmentLocationDropdown").val();
-    
-    if (departmentName === "") {
-        alert("Please enter a department name.");
-        return;
-    }
-
-    $.ajax({
-        url: "php/createDepartment.php",
-        type: "POST",
-        dataType: "json",
-        data: {
-            name: departmentName,
-            locationID: departmentLocationDropdown
-        },
-        success: function (response) {
-            if (response.status.code === "200") {
-                $("#addDepartmentModal").modal("hide");
-                fetchAndGenerateDepartmentTable(null);
-            } else {
-                alert("Failed to add department. Please try again.");
-            }
-        },
-        error: function (xhr, status, error) {
-            alert("AJAX error: " + error);
-        }
-    });
-});
 
 
 // ********************************************************************************************************************************************
@@ -800,23 +911,80 @@ function fetchAndGenerateLocationTable(searchText) {
 // Initial table generation for locations
 fetchAndGenerateLocationTable(null);
 
+
+// Event listener to detect when the add location modal is shown
+$('#addLocationModal').on('show.bs.modal', function (e) {
+    // event.preventDefault();
+
+    // Clear any previous input in the location name field
+    $('#addLocationName').val('');
+});
+
+
+// Event listener for the add location form submission
+$('#addLocationForm').submit(function(event) {
+    // Prevent the default form submission behavior
+    event.preventDefault();
+
+    // Get the location name from the input field
+    var locationName = $('#addLocationName').val();
+
+    // Send an AJAX request to insert the location into the database
+    $.ajax({
+        url: 'php/createLocation.php',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            name: locationName
+        },
+        success: function(response) {
+            // Check if the insertion was successful
+            if (response.status.code === '200') {
+                // Close the modal
+                $('#addLocationModal').modal('hide');
+                refreshLocationTable();
+                // Optionally, you can update the location dropdown or perform any other necessary actions
+            } else {
+                // Handle the case where the insertion failed
+                console.error('Failed to add location:', response.status.description);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error adding location:', error);
+        }
+    });
+});
+
+
+
+ // Function to refresh the personnel table
+ function refreshLocationTable() {
+    var searchText = $("#searchInp").val().trim();
+    fetchAndGenerateLocationTable(searchText, 'locationTableBody');
+}
+
+
 // Edit Location modal event
-$(document).ready(function() {
-    $(document).on('show.bs.modal', '#editLocationModal', function(e) {
+// $(document).ready(function() {
+//     $(document).on('show.bs.modal', '#editLocationModal', function(e) {
+        $("#editLocationModal").on("show.bs.modal", function (e) {
+
         var locationId = $(e.relatedTarget).attr("data-id");
         var locationName = $(e.relatedTarget).attr("data-name");
         $('#editLocationId').val(locationId);
         $('#editLocationName').val(locationName);
     });
-});
+// });
 
 // Event handler for submitting the "Edit Location" form
-$("#saveEditLocationForm").click(function () {    
-    $("#editLocationForm").submit();
-});
+// $("#saveEditLocationForm").click(function () {    
+//     $("#editLocationForm").submit();
+// });
 
 // Event handler for submitting the "Edit Location" form
-$(document).on('submit', '#editLocationForm', function(event) {
+// $(document).on('submit', '#editLocationForm', function(event) {
+    $("#editLocationForm").on("submit", function (event) {
+    
     // Prevent the default form submission
     event.preventDefault();
 
@@ -857,17 +1025,54 @@ $(document).on('submit', '#editLocationForm', function(event) {
 $(document).on('click', '.Location-delete-btn', function() {
     var locationId = $(this).data('id');
     
+
+    
+    $.ajax({
+        url:"php/checkLocationUse.php",
+        // SELECT d.name AS departmentName, COUNT(p.id) as personnelCount FROM department d LEFT JOIN personnel p ON (p.departmentID = d.id) WHERE d.id  = ?
+        type: "POST",
+        dataType: "json",
+        data: {
+          id: locationId // Retrieves the data-id attribute from the calling button
+        },
+        success: function (result) {
+            console.log(result);
+          if (result.status.code == 200) {
+            if (result.data[0].DepartmentCount == 0) {
+              $("#areYouSureLocationName").text(result.data[0].locationName);
+    
+              $("#areYouSureDeleteLocationModal").modal("show");
+    // $('#deleteDepartmentModal').modal('show');
+
+            } else {
+              $("#cantDeleteLocationName").text(result.data[0].locationName);
+              $("#DepartmentCount").text(result.data[0].DepartmentCount);
+    
+              $("#cantDeleteLocationModal").modal("show");
+            }
+          } else {
+            $("#exampleModal .modal-title").replaceWith("Error retrieving data");
+          }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          $("#exampleModal .modal-title").replaceWith("Error retrieving data");
+        }
+      });
+
+    
+    $('#areYouSureDeleteLocationModal').data('locationId', locationId);
+
     // Open the delete confirmation modal
-    $('#deleteLocationModal').modal('show');
+    // $('#deleteLocationModal').modal('show');
     
     // Set data attributes in the modal for further processing
-    $('#deleteLocationModal').data('locationId', locationId);
 });
 
 // Event listener for confirm delete button click for locations
 $('#confirmDeleteLocationBtn').on('click', function() {
+    // alert("hi");
     // Get location details from the modal data attributes
-    var locationId = $('#deleteLocationModal').data('locationId');
+    var locationId = $('#areYouSureDeleteLocationModal').data('locationId');
     
     // Call the deleteLocation function
     deleteLocation(locationId);
@@ -876,7 +1081,7 @@ $('#confirmDeleteLocationBtn').on('click', function() {
 // Event listener for cancel button click
 $('#cancelDeleteLocationBtn').on('click', function() {
     // Hide the delete confirmation modal
-    $('#deleteLocationModal').modal('hide');
+    $('#areYouSureDeleteLocationModal').modal('hide');
 });
 
 // Function to handle deletion of location
@@ -903,38 +1108,6 @@ function deleteLocation(locationId) {
     });
 }
 
-// Function to handle the submission of the "Add Location" form
-$("#saveLocationBtn").click(function () {
-    var locationName = $("#locationName").val().trim();
-    
-    // Validate if location name is not empty
-    if (locationName === "") {
-        alert("Please enter a location name.");
-        return;
-    }
-
-    // AJAX request to send data to the server
-    $.ajax({
-        url: "php/createLocation.php",
-        type: "POST",
-        dataType: "json",
-        data: {
-            name: locationName
-        },
-        success: function (response) {
-            if (response.status.code === "200") {
-                $("#addLocationModal").modal("hide");
-                fetchAndGenerateLocationTable(null);
-            } else {
-                alert("Failed to add location. Please try again.");
-            }
-        },
-        error: function (xhr, status, error) {
-            alert("AJAX error: " + error);
-        }
-    });
-});
-
 
 
 // Add button functionality
@@ -959,6 +1132,7 @@ $("#refreshBtn").click(function () {
     
     if ($("#personnelBtn").hasClass("active")) {
         // Refresh personnel table
+
         fetchAndGenerateTable(null, 'personnelTableBody');
     } else if ($("#departmentsBtn").hasClass("active")) {
         // Refresh department table
@@ -972,6 +1146,8 @@ $("#refreshBtn").click(function () {
 // Personnel button click
 $("#personnelBtn").click(function () {
     // Call function to refresh personnel table
+    $('#filterBtn').prop('disabled', false);
+
     fetchAndGenerateTable(null, 'personnelTableBody');
     $("#searchInp").val(''); // Clear search input
     $("#searchType").val(''); 
@@ -980,6 +1156,8 @@ $("#personnelBtn").click(function () {
 
 // Departments button click
 $("#departmentsBtn").click(function () {
+    $('#filterBtn').prop('disabled', true);
+
     // Call function to refresh department table
     fetchAndGenerateDepartmentTable(null);
     $("#searchInp").val(''); // Clear search input
@@ -990,18 +1168,22 @@ $("#departmentsBtn").click(function () {
 // Locations button click
 $("#locationsBtn").click(function () {
     // Call function to refresh location table
+    $('#filterBtn').prop('disabled', true);
+
     fetchAndGenerateLocationTable(null);
     $("#searchInp").val(''); // Clear search input
     $("#searchType").val(''); 
     $("#searchType").val('location'); 
 });
-
-// Function to handle close button click event
-function handleCloseButtonClick() {
-    $('#editDepartmentModal, #editLocationModal, #addDepartmentModal, #addLocationModal, #addpersonnelModal').modal('hide');
-}
-
-// Attach event listener to close buttons
-$(document).on('click', '.modal .close', handleCloseButtonClick);
-$(document).on('click', '.modal .btn-secondary', handleCloseButtonClick);
 });
+
+// // Function to handle close button click event
+// function handleCloseButtonClick() {
+//     $('#editDepartmentModal, #editLocationModal, #addDepartmentModal, #addLocationModal, #addpersonnelModal').modal('hide');
+// }
+
+// // Attach event listener to close buttons
+// $(document).on('click', '.modal .close', handleCloseButtonClick);
+// $(document).on('click', '.modal .btn-secondary', handleCloseButtonClick);
+// });
+
