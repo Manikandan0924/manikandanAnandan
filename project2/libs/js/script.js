@@ -1109,7 +1109,6 @@ function deleteLocation(locationId) {
 }
 
 
-
 // Add button functionality
 $("#addBtn").click(function () {
     var modalpopupvalue = $("#searchType").val();
