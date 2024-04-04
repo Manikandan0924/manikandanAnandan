@@ -32,7 +32,7 @@ if (mysqli_connect_errno()) {
 $searchText = isset($_GET['txt']) ? $_GET['txt'] : '';
 
 // SQL does not accept parameters and so is not prepared
-$query = "SELECT d.id, d.name, l.name as locationName FROM department d LEFT JOIN location l ON d.locationID = l.id";
+$query = "SELECT d.id, d.name, l.name as locationName FROM department d LEFT JOIN location l ON d.locationID = l.id ORDER BY name ASC";
 
 // If search text is provided, add a WHERE clause to filter results
 if (!empty($searchText)) {

@@ -39,19 +39,19 @@ $query = null;
 if ($_REQUEST['txt'] != '') {
     if ($_REQUEST['type'] == 'personnel') {
         // Prepare the query for personnel search
-        $query = $conn->prepare('SELECT `p`.`id`, `p`.`firstName`, `p`.`lastName`, `p`.`email`, `p`.`jobTitle`, `d`.`id` as `departmentID`, `d`.`name` AS `departmentName`, `l`.`id` as `locationID`, `l`.`name` AS `locationName` FROM `personnel` `p` LEFT JOIN `department` `d` ON (`d`.`id` = `p`.`departmentID`) LEFT JOIN `location` `l` ON (`l`.`id` = `d`.`locationID`) WHERE `p`.`firstName` LIKE ? OR `p`.`lastName` LIKE ? OR `p`.`email` LIKE ? OR `p`.`jobTitle` LIKE ? OR `d`.`name` LIKE ? OR `l`.`name` LIKE ? ORDER BY `p`.`id`');
+        $query = $conn->prepare('SELECT `p`.`id`, `p`.`firstName`, `p`.`lastName`, `p`.`email`, `p`.`jobTitle`, `d`.`id` as `departmentID`, `d`.`name` AS `departmentName`, `l`.`id` as `locationID`, `l`.`name` AS `locationName` FROM `personnel` `p` LEFT JOIN `department` `d` ON (`d`.`id` = `p`.`departmentID`) LEFT JOIN `location` `l` ON (`l`.`id` = `d`.`locationID`) WHERE `p`.`firstName` LIKE ? OR `p`.`lastName` LIKE ? OR `p`.`email` LIKE ? OR `p`.`jobTitle` LIKE ? OR `d`.`name` LIKE ? OR `l`.`name` LIKE ? ORDER BY `p`.`lastName` ASC');
         // Bind search text parameter
         $likeText = "%" . $_REQUEST['txt'] . "%";
         $query->bind_param("ssssss", $likeText, $likeText, $likeText, $likeText, $likeText, $likeText);
     } elseif ($_REQUEST['type'] == 'department') {
         // Prepare the query for department search
-        $query = $conn->prepare('SELECT d.`id`, d.`name`, l.`name` AS `locationName` FROM `department` d LEFT JOIN `location` l ON d.`locationID` = l.`id` WHERE d.`name` LIKE ? OR l.`name` LIKE ? ORDER BY d.`id`');
+        $query = $conn->prepare('SELECT d.`id`, d.`name`, l.`name` AS `locationName` FROM `department` d LEFT JOIN `location` l ON d.`locationID` = l.`id` WHERE d.`name` LIKE ? OR l.`name` LIKE ? ORDER BY d.`name` ASC');
         // Bind search text parameter
         $likeText = "%" . $_REQUEST['txt'] . "%";
         $query->bind_param("ss", $likeText, $likeText);
     } elseif ($_REQUEST['type'] == 'location') {
         // Prepare the query for location search
-        $query = $conn->prepare('SELECT l.`id` AS locationid, l.`name` AS locationname FROM `location` l WHERE l.`name` LIKE ? ORDER BY l.`id`');
+        $query = $conn->prepare('SELECT l.`id` AS locationid, l.`name` AS locationname FROM `location` l WHERE l.`name` LIKE ? ORDER BY l.`name` ASC');
         // Bind search text parameter
         $likeText = "%" . $_REQUEST['txt'] . "%";
         $query->bind_param("s", $likeText);
@@ -59,11 +59,11 @@ if ($_REQUEST['txt'] != '') {
 } else {
     // If search text is empty, execute a query without any filtering and maintain original order
     if ($_REQUEST['type'] == 'personnel') {
-        $query = $conn->prepare('SELECT `p`.`id`, `p`.`firstName`, `p`.`lastName`, `p`.`email`, `p`.`jobTitle`, `d`.`id` as `departmentID`, `d`.`name` AS `departmentName`, `l`.`id` as `locationID`, `l`.`name` AS `locationName` FROM `personnel` `p` LEFT JOIN `department` `d` ON (`d`.`id` = `p`.`departmentID`) LEFT JOIN `location` `l` ON (`l`.`id` = `d`.`locationID`) ORDER BY `p`.`id`');
+        $query = $conn->prepare('SELECT `p`.`id`, `p`.`firstName`, `p`.`lastName`, `p`.`email`, `p`.`jobTitle`, `d`.`id` as `departmentID`, `d`.`name` AS `departmentName`, `l`.`id` as `locationID`, `l`.`name` AS `locationName` FROM `personnel` `p` LEFT JOIN `department` `d` ON (`d`.`id` = `p`.`departmentID`) LEFT JOIN `location` `l` ON (`l`.`id` = `d`.`locationID`) ORDER BY `p`.`lastName` ASC');
     } elseif ($_REQUEST['type'] == 'department') {
-        $query = $conn->prepare('SELECT d.`id`, d.`name`, l.`name` AS `locationName` FROM `department` d LEFT JOIN `location` l ON d.`locationID` = l.`id` ORDER BY d.`id`');
+        $query = $conn->prepare('SELECT d.`id`, d.`name`, l.`name` AS `locationName` FROM `department` d LEFT JOIN `location` l ON d.`locationID` = l.`id` ORDER BY d.`name` ASC');
     } elseif ($_REQUEST['type'] == 'location') {
-        $query = $conn->prepare('SELECT l.`id` AS locationid, l.`name` AS locationname FROM `location` l ORDER BY l.`id`');
+        $query = $conn->prepare('SELECT l.`id` AS locationid, l.`name` AS locationname FROM `location` l ORDER BY l.`name` ASC');
     }
 }
 

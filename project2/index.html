@@ -73,7 +73,7 @@
             </div>
 
             <!-- Edit Personnel Modal -->
-            <div class="modal fade" id="editPersonnelModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="editPersonnelModal" tabindex="-1" role="dialog"  data-bs-backdrop="false" data-bs-keyboard="false" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable">
                     <div class="modal-content shadow">
                         <div class="modal-header bg-primary bg-gradient text-white">
@@ -115,27 +115,33 @@
                 </div>
             </div>
 
-            <!-- Delete Personnel Modal -->
-            <div class="modal fade" id="deletePersonnelModal" tabindex="-1" role="dialog" aria-labelledby="deletePersonnelModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header bg-primary bg-gradient text-white">
-                            <h5 class="modal-title" id="deletePersonnelModalLabel">Remove employee entry?</h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            Are you sure that you want to remove the entry for <span id="name"  class="fw-bold"></span> ?
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" id="confirmDeletePersonnelBtn" class="btn btn-outline-secondary btn-sm myBtn" data-bs-dismiss="modal">YES</button>
-                            <button type="button" id="cancelDeletePersonnelBtn"  class="btn btn-outline-secondary btn-sm myBtn" data-bs-dismiss="modal">NO</button>
-                        </div>
+
+
+           <!-- Delete Personnel Modal -->
+           <div class="modal fade" id="deletePersonnelModal" tabindex="-1" role="dialog"  data-bs-backdrop="false" data-bs-keyboard="false" aria-labelledby="deletePersonnelModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content shadow">
+                    <div class="modal-header bg-primary bg-gradient text-white">
+                        <h5 class="modal-title" id="deletePersonnelModalLabel">Remove employee entry?</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                            <input id="areYouSurePersonnelID" type="hidden">                  
+                              Are you sure that you want to remove the entry for <span id="areYouSurePersonnelName" class="fw-bold"></span>?
+   
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="confirmDeletePersonnelBtn" class="btn btn-outline-secondary btn-sm myBtn" data-bs-dismiss="modal">YES</button>
+                        <button type="button" id="cancelDeletePersonnelBtn" class="btn btn-outline-secondary btn-sm myBtn" data-bs-dismiss="modal">NO</button>
                     </div>
                 </div>
             </div>
+        </div>
+        
+
 
             <!-- Add Personnel Modal -->
-            <div class="modal fade" id="addpersonnelModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="addpersonnelModal" tabindex="-1" role="dialog"  data-bs-backdrop="false" data-bs-keyboard="false" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable">
                     <div class="modal-content shadow"> 
                         <div class="modal-header bg-primary bg-gradient text-white">
@@ -190,7 +196,7 @@
                 </section>
 
                 <!-- Edit Department Modal -->
-                <div class="modal fade" id="editDepartmentModal" tabindex="-1" role="dialog" aria-labelledby="editDepartmentModalLabel" aria-hidden="true">
+                <div class="modal fade" id="editDepartmentModal" tabindex="-1" role="dialog"  data-bs-backdrop="false" data-bs-keyboard="false" aria-labelledby="editDepartmentModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable">
                         <div class="modal-content shadow">
                             <div class="modal-header bg-primary bg-gradient text-white">
@@ -263,7 +269,7 @@
 
 
 <!-- Add Department Modal -->
-<div class="modal fade" id="addDepartmentModal" tabindex="-1" role="dialog" aria-labelledby="addDepartmentModalLabel" aria-hidden="true">
+<div class="modal fade" id="addDepartmentModal" tabindex="-1" role="dialog"  data-bs-backdrop="false" data-bs-keyboard="false" aria-labelledby="addDepartmentModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content shadow"> 
           <div class="modal-header bg-primary bg-gradient text-white">
@@ -294,7 +300,7 @@
 
 <!-- ********************************************************************************************************************************************** -->
 <!-- Locations Tab -->
-            <div class="tab-pane" id="locations-tab-pane" role="tabpanel" aria-labelledby="contact-tab" tabindex="0">
+            <div class="tab-pane" id="locations-tab-pane" role="tabpanel"  aria-labelledby="contact-tab" tabindex="0">
                 <section>
                     <div class="table-container">
                         <table id="locationTable" class="table table-hover">
@@ -307,7 +313,7 @@
             </div>
       
             <!-- Edit Location Modal -->
-            <div class="modal fade" id="editLocationModal" tabindex="-1" role="dialog" aria-labelledby="editLocationModalLabel" aria-hidden="true">
+            <div class="modal fade" id="editLocationModal" tabindex="-1" role="dialog"  data-bs-backdrop="false" data-bs-keyboard="false" aria-labelledby="editLocationModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable">
                   <div class="modal-content shadow">
                     <div class="modal-header bg-primary bg-gradient text-white">
@@ -372,7 +378,7 @@
       
 
          <!-- Add Location Modal -->
-<div class="modal fade" id="addLocationModal" tabindex="-1" role="dialog" aria-labelledby="addLocationModalLabel" aria-hidden="true">
+<div class="modal fade" id="addLocationModal" tabindex="-1" role="dialog"  data-bs-backdrop="false" data-bs-keyboard="false" aria-labelledby="addLocationModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content shadow">
           <div class="modal-header bg-primary bg-gradient text-white">
@@ -388,7 +394,6 @@
               </form>
           </div>
           <div class="modal-footer">
-            <!-- <button type="submit" id="addLocationBtn" class="btn btn-outline-primary btn-sm myBtn">SAVE</button> -->
             <button type="submit" form="addLocationForm" class="btn btn-outline-primary btn-sm myBtn">SAVE</button>
             <button type="button" class="btn btn-outline-primary btn-sm myBtn" data-bs-dismiss="modal">CANCEL</button>
           </div>
@@ -431,8 +436,7 @@
           </form>
         </div>
         <div class="modal-footer">
-          <!-- <button type="button" id="applyFilterBtn" class="btn btn-primary">Apply Filter</button> -->
-          <button type="button" class="btn btn-outline-secondary btn-sm myBtn" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm myBtn" data-bs-dismiss="modal">CLOSE</button>
         </div>
       </div>
     </div>
