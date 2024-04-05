@@ -1,54 +1,75 @@
 
 $(document).ready(function () {
 
-    $.ajax({
-        url: "php/getDepartmentDetails.php",
-        type: "GET",
-        dataType: "json",
-        success: function(response) {
-            $('#filterPersonnelByDepartment').empty();
-            $('#filterPersonnelByDepartment').append($('<option>', {
-                value: '',
-                text: 'All'
-            }));
-            $.each(response.data, function(index, department) {
+       
 
+    $('#filterPersonnelModal').on('show.bs.modal', function () {
+        // Store the selected values
+        var selectedDepartment = $('#filterPersonnelByDepartment').val();
+        var selectedLocation = $('#filterPersonnelByLocation').val();
+    
+        // Populate departments dropdown
+        $.ajax({
+            url: "php/getDepartmentDetails.php",
+            type: "GET",
+            dataType: "json",
+            success: function(response) {
+                // $('#filterPersonnelByDepartment').empty('');
                 $('#filterPersonnelByDepartment').append($('<option>', {
-                    value: department.id,
-                    text: department.name
+                    value: '',
+                    text: 'All'
                 }));
-            });
-        },
-        error: function(xhr, status, error) {
-            // console.error("Error fetching locations:", error);
-        }
-    });
-
-    $.ajax({
-        url: "php/getLocationDetails.php",
-        type: "GET",
-        dataType: "json",
-        success: function(response) {
-            $('#filterPersonnelByLocation').empty();
-            $('#filterPersonnelByLocation').append($('<option>', {
-                value: '',
-                text: 'All'
-            }));
-            $.each(response.data, function(index, location) {
+                $.each(response.data, function(index, department) {
+                    $('#filterPersonnelByDepartment').append($('<option>', {
+                        value: department.id,
+                        text: department.name
+                    }));
+                });
+    
+                // Set selected value for department dropdown
+                $('#filterPersonnelByDepartment').val(selectedDepartment);
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+            }
+        });
+    
+        // Populate locations dropdown
+        $.ajax({
+            url: "php/getLocationDetails.php",
+            type: "GET",
+            dataType: "json",
+            success: function(response) {
+                // $('#filterPersonnelByLocation').empty();
                 $('#filterPersonnelByLocation').append($('<option>', {
-                    value: location.locationid,
-                    text: location.locationname
+                    value: '',
+                    text: 'All'
                 }));
-            });
-        },
-        error: function(xhr, status, error) {
-            // console.error("Error fetching locations:", error);
-        }
+                $.each(response.data, function(index, location) {
+                    $('#filterPersonnelByLocation').append($('<option>', {
+                        value: location.locationid,
+                        text: location.locationname
+                    }));
+                });
+    
+                // Set selected value for location dropdown
+                $('#filterPersonnelByLocation').val(selectedLocation);
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+            }
+        });
     });
+    
+    $('#filterBtn').click(function () {
+        // Open a modal to allow the user to apply a filter
+        $('#filterPersonnelModal').modal('show');
+    });
+    
 
 
     $('#filterPersonnelByDepartment').change(function () {
-
+    $('#filterPersonnelByLocation').val('');
         $.ajax({
             url: "php/filterPersonnelByDepartment.php",
             type: "POST",
@@ -59,6 +80,7 @@ $(document).ready(function () {
             success: function (response) {
                 // console.log('response'+response.data);
                 generatePersonnelTable(response.data, 'personnelTableBody');
+                
             },
             error: function (xhr, status, error) {
                 // console.error(error);
@@ -69,6 +91,7 @@ $(document).ready(function () {
 
 
     $('#filterPersonnelByLocation').change(function () {
+  $('#filterPersonnelByDepartment').val('');
 
         $.ajax({
             url: "php/filterPersonnelByLocation.php",
@@ -282,14 +305,14 @@ function generatePersonnelTable(data, tableBodyId) {
     // Initial table generation
     fetchAndGenerateTable(null, 'personnelTableBody');
 
-// Event listener for filter button click to open the modal
-$('#filterBtn').click(function () {
-    // Reset dropdowns to default state
-    $('#filterPersonnelByDepartment').val('');
-    $('#filterPersonnelByLocation').val('');
-    // Open a modal to allow the user to apply a filter
-    $('#filterPersonnelModal').modal('show');
-});
+// // Event listener for filter button click to open the modal
+// $('#filterBtn').click(function () {
+//     // // Reset dropdowns to default state
+//     // $('#filterPersonnelByDepartment').val('');
+//     // $('#filterPersonnelByLocation').val('');
+//     // Open a modal to allow the user to apply a filter
+//     $('#filterPersonnelModal').modal('show');
+// });
 
 
 
@@ -530,7 +553,7 @@ $("#editPersonnelForm").on("submit", function (event) {
             },
             error: function(xhr, status, error) {
                 // AJAX error
-                console.log("AJAX error: ", error);
+                // console.log("AJAX error: ", error);
                 alert("AJAX error: " + error);
             }
         });
@@ -958,6 +981,7 @@ $("#editLocationForm").on("submit", function (event) {
 
 // Event listener for delete button click for locations
 $(document).on('click', '.Location-delete-btn', function() {
+    // alert('Hi');
     var locationId = $(this).data('id');
     
 
@@ -970,7 +994,7 @@ $(document).on('click', '.Location-delete-btn', function() {
           id: locationId,
         },
         success: function (result) {
-            console.log(result);
+            // console.log(result);
           if (result.status.code == 200) {
             if (result.data[0].DepartmentCount == 0) {
               $("#areYouSureLocationName").text(result.data[0].locationName);
